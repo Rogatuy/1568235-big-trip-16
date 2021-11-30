@@ -1,19 +1,17 @@
-export const createFilterTemplate = () => (
-  `<form class="trip-filters" action="#" method="get">
-    <div class="trip-filters__filter">
-      <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything">
-      <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-    </div>
+import {generateFilters} from '../mock/filter.js';
 
-    <div class="trip-filters__filter">
-      <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-      <label class="trip-filters__filter-label" for="filter-future">Future</label>
-    </div>
+const createFilterTemplate = (arrayOfFilters) => {
+  const arrayOfFilter = arrayOfFilters;
+  return arrayOfFilter.map((array) => `    <div class="trip-filters__filter">
+  <input id="filter-${array.name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${array.name}" checked>
+  <label class="trip-filters__filter-label" for="filter-${array.name}">${array.name}</label>
+</div>`).join('');
+};
 
-    <div class="trip-filters__filter">
-      <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" checked>
-      <label class="trip-filters__filter-label" for="filter-past">Past</label>
-    </div>
+export const createFiltersTemplate = () => {
+  const filters = createFilterTemplate(generateFilters());
+  return `<form class="trip-filters" action="#" method="get">
+  ${filters}
     <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`
-);
+  </form>`;
+};
