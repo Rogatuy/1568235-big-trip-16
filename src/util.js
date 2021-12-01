@@ -8,15 +8,15 @@ export const getRandomInt = (a = 0, b = 1) => {
 };
 
 export const getRandomElementsArray = (arr, n) => {
-  const resultArray = new Array(n);
-  let len = arr.length;
-  const taken = new Array(len);
-  while (n--) {
-    const x = Math.floor(Math.random() * len);
-    resultArray[n] = arr[x in taken ? taken[x] : x];
-    taken[x] = --len in taken ? taken[len] : len;
+  let currentIndex = arr.length,  randomIndex;
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
   }
-  return resultArray;
+  const newArray = arr.slice(0, n);
+  return newArray;
 };
 
 export const generateRandomElementOfArray = (array) => {
@@ -24,13 +24,4 @@ export const generateRandomElementOfArray = (array) => {
   return array[randomIndex];
 };
 
-export const getFirstWordOfString = (element) => {
-  const newString = String(element);
-  for (let i = 0; i < newString.length; i++) {
-    if (newString[i] ===' ') {
-      const endOfSymbol = (i);
-      const firstWord = newString.substring(0, endOfSymbol);
-      return firstWord;
-    }
-  }
-};
+export const getFirstWordOfString = (element) => element ? element.split(' ')[0] : '';

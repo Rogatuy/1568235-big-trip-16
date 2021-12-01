@@ -47,28 +47,26 @@ const generateDateEnd = (startDate) => {
 };
 
 const generateTimeDifference = (startTime, endTime) => {
+  let resultTime;
+  let resultMinutes;
+  let resultHours;
+  let resultDays;
+  let remainMinutes;
   const differenceTimeMinute = dayjs(endTime).diff(startTime, 'minute');
-  if (differenceTimeMinute < 60) {
-    const resultMinutes = `${differenceTimeMinute  }M`;
-    const resultTime = resultMinutes;
-    return resultTime;
-  } else {
-    if (differenceTimeMinute < 1440) {
-      const resultHours = parseInt(differenceTimeMinute/60, 10);
-      const resultMinutes = differenceTimeMinute - resultHours*60;
-      let resultTime;
-      if (resultMinutes !== 0) {
-        resultTime = `${resultHours}H ${resultMinutes}M`;
-      } else {
-        resultTime = `${resultHours}H`;
-      }
-      return resultTime;
-    } else {
-      const resultDays = parseInt(differenceTimeMinute/1440, 10);
-      const remainMinutes = differenceTimeMinute-(resultDays*1440);
-      const resultHours = parseInt(remainMinutes/60, 10);
-      const resultMinutes = remainMinutes - resultHours*60;
-      let resultTime;
+  switch(true) {
+    case (differenceTimeMinute < 60):
+      resultMinutes = `${differenceTimeMinute  }M`;
+      break;
+    case (differenceTimeMinute < 1440):
+      resultHours = parseInt(differenceTimeMinute/60, 10);
+      resultMinutes = differenceTimeMinute - resultHours*60;
+      resultTime = (resultMinutes !== 0) ? (`${resultHours}H ${resultMinutes}M`) : (`${resultHours}H`);
+      break;
+    case (differenceTimeMinute >= 1440):
+      resultDays = parseInt(differenceTimeMinute/1440, 10);
+      remainMinutes = differenceTimeMinute-(resultDays*1440);
+      resultHours = parseInt(remainMinutes/60, 10);
+      resultMinutes = remainMinutes - resultHours*60;
       if ((resultMinutes !== 0) && (resultHours !== 0)) {
         resultTime = `${resultDays  }D ${resultHours}H ${resultMinutes}M`;
       } else {
@@ -77,10 +75,9 @@ const generateTimeDifference = (startTime, endTime) => {
         } else {
           resultTime = `${resultDays  }D ${resultHours}H`;
         }
-      }
-      return resultTime;
-    }
+        break; }
   }
+  return resultTime;
 };
 
 const generatePhotos = () => {
