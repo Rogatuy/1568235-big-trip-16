@@ -37,6 +37,7 @@ const generateDate = () => {
   const hoursGap = getRandomInt(0, MAX_HOURS_GAP);
   const minutesGap = getRandomInt(0, MAX_MINUTES_GAP);
   return dayjs().add(daysGap, 'day').add(hoursGap, 'hours').add(minutesGap, 'minutes').toDate();
+
 };
 
 const generateDateEnd = (startDate) => {

@@ -1,4 +1,6 @@
-export const createEventTemplate = (event) => {
+import {createElement} from '../render.js';
+
+const createEventTemplate = (event) => {
   const {dateDayOutsideTegEvent, dateDayInsideTegEvent, startDateOutsideTegEvent, startDateInsideTegEvent, endDateOutsideTegEvent, endDateInsideTegEvent, type, destination, price, timeDifference, isFavorite} = event;
 
   const buttonFavoriteClassName = (isFavorite) ? 'event__favorite-btn--active' : '';
@@ -41,3 +43,27 @@ export const createEventTemplate = (event) => {
 </li>`;
 };
 
+export default class EventView {
+  #element = null;
+  #event = null;
+
+  constructor(event) {
+    this.#event = event;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createEventTemplate(this.#event);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

@@ -1,6 +1,8 @@
-import {createEventEditTypesTemplate} from '../view/form-edit-view.js';
+import {createEventEditTypesTemplate} from './form-edit-view.js';
+import {createElement} from '../render.js';
+import {BLANK_EVENT} from './form-edit-view.js';
 
-export const createEventNewPhotosTemplate = (arrayOfPictures) => {
+const createEventNewPhotosTemplate = (arrayOfPictures) => {
   const arrayOfPicture = arrayOfPictures;
   return arrayOfPicture.map((array) => `<img class="event__photo" src="${array.src}" alt="${array.description}">`).join('');
 };
@@ -17,7 +19,7 @@ export const createEventOfferTemplate = (objectOfOffer) => {
 </div>` ).join('');
 };
 
-export const createFormNewEventTemplate = (event) => {
+const createFormNewEventTemplate = (event) => {
   const {type, price, destination, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, pictures, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const photosTemplate = createEventNewPhotosTemplate(pictures);
@@ -94,3 +96,28 @@ export const createFormNewEventTemplate = (event) => {
   </form>
 </li>`;
 };
+
+export default class EventNewView {
+  #element = null;
+  #event = null;
+
+  constructor(event = BLANK_EVENT) {
+    this.#event = event;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFormNewEventTemplate(this.#event);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

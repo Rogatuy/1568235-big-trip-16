@@ -1,5 +1,6 @@
 import {TYPE_OF_POINT} from '../mock/event.js';
-import {createEventOfferTemplate} from './form-new-event.js';
+import {createEventOfferTemplate} from './form-new-view.js';
+import {createElement} from '../render.js';
 
 export const createEventEditTypesTemplate = (currentType) => {
   const types = TYPE_OF_POINT;
@@ -9,7 +10,26 @@ export const createEventEditTypesTemplate = (currentType) => {
     </div>`).join('');
 };
 
-export const createFormEditTemplate = (event) => {
+export const BLANK_EVENT = {
+  dateDayOutsideTegEvent: null,
+  dateDayInsideTegEvent: null,
+  startDateOutsideTegEvent: null,
+  startDateInsideTegEvent: null,
+  startDateInsideTegFormEdit: null,
+  endDateOutsideTegEvent: null,
+  endDateInsideTegEvent: null,
+  endDateInsideTegFormEdit: null,
+  timeDifference: null,
+  pictures: [],
+  type: 'bus',
+  offer: {},
+  destination: '',
+  description: '',
+  price: null,
+  isFavorite: false
+};
+
+const createFormEditTemplate = (event) => {
   const {type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const offersTemplate = createEventOfferTemplate(offer);
@@ -82,3 +102,28 @@ export const createFormEditTemplate = (event) => {
     </form>
   </li>`;
 };
+
+export default class EventEditView {
+  #element = null;
+  #event = null;
+
+  constructor(event = BLANK_EVENT) {
+    this.#event = event;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFormEditTemplate(this.#event);
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
