@@ -1,4 +1,12 @@
-import {generateFilters} from '../mock/filter.js';
+import {createElement} from '../render.js';
+
+const FILTERS = [{
+  name: 'everything',
+}, {
+  name: 'past',
+}, {
+  name: 'future',
+}];
 
 const createFilterTemplate = (arrayOfFilters) => {
   const arrayOfFilter = arrayOfFilters;
@@ -8,10 +16,30 @@ const createFilterTemplate = (arrayOfFilters) => {
 </div>`).join('');
 };
 
-export const createFiltersTemplate = () => {
-  const filters = createFilterTemplate(generateFilters());
+const createFiltersTemplate = () => {
+  const filters = createFilterTemplate(FILTERS);
   return `<form class="trip-filters" action="#" method="get">
   ${filters}
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 };
+
+export default class FilterView {
+  #element = null;
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFiltersTemplate();
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}

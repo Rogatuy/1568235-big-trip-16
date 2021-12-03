@@ -1,11 +1,8 @@
 import {createElement} from '../render.js';
 
-const createListEventsTemplate = () => (
-  `<ul class="trip-events__list">
-  </ul>`
-);
+const createBoardTemplate = () => '<section class="trip-events container"></section>';
 
-export default class EventListView {
+export default class BoardView {
   #element = null;
 
   get element() {
@@ -17,7 +14,7 @@ export default class EventListView {
   }
 
   get template() {
-    return createListEventsTemplate();
+    return createBoardTemplate();
   }
 
   removeElement() {

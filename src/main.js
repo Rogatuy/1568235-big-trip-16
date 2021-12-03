@@ -1,13 +1,14 @@
-import {createMenuTemplate} from './view/menu-view.js';
-import {createInfoTemplate} from './view/info-view.js';
-import {createFiltersTemplate} from './view/filter-view.js';
-import {createSortTemplate} from './view/sort-view.js';
-import {createListEventsTemplate} from './view/list-events-view.js';
-import {createFormEditTemplate} from './view/form-edit-view.js';
-import {createFormNewEventTemplate} from './view/form-new-event.js';
-import {createEventTemplate} from './view/event-view.js';
-import {renderTemplate, RenderPosition} from './render.js';
+import SiteMenuView from './view/menu-view.js';
+import InfoView from './view/info-view.js';
+import FilterView from './view/filter-view.js';
+import SortView from './view/sort-view.js';
+import EventListView from './view/list-events-view.js';
+import EventEditView from './view/form-edit-view.js';
+import EventNewView from './view/form-new-view.js';
+import EventView from './view/event-view.js';
+import {renderElement, RenderPosition} from './render.js';
 import {generateEvent} from './mock/event.js';
+import BoardView from './view/board-view.js';
 
 const TASK_COUNT = 12;
 
@@ -20,19 +21,21 @@ const siteHeaderMenuElement = siteHeaderElement.querySelector('.trip-controls__n
 const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-main');
 const siteMainElement = siteBodyElement.querySelector('.page-main');
 const siteEventsElement = siteMainElement.querySelector('.trip-events');
+const boardComponent = new BoardView();
 
-renderTemplate(siteHeaderMenuElement, createMenuTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(siteHeaderInfoElement, createInfoTemplate(), RenderPosition.AFTERBEGIN);
-renderTemplate(siteHeaderFilterElement, createFiltersTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(siteEventsElement, createSortTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(siteEventsElement, createListEventsTemplate(), RenderPosition.BEFOREEND);
+renderElement(siteHeaderMenuElement, new SiteMenuView().element, RenderPosition.BEFOREEND);
+renderElement(siteHeaderInfoElement, new InfoView().element, RenderPosition.AFTERBEGIN);
+renderElement(siteHeaderFilterElement, new FilterView().element, RenderPosition.BEFOREEND);
+renderElement(siteEventsElement, boardComponent.element, RenderPosition.BEFOREEND);
+renderElement(boardComponent.element, new SortView().element, RenderPosition.AFTERBEGIN);
 
-const siteListEvents = siteMainElement.querySelector('.trip-events__list');
-renderTemplate(siteListEvents, createFormEditTemplate(events[0]), RenderPosition.BEFOREEND);
-renderTemplate(siteListEvents, createFormNewEventTemplate(events[1]), RenderPosition.BEFOREEND);
+const siteListEvents = new EventListView();
+renderElement(boardComponent.element, siteListEvents.element, RenderPosition.BEFOREEND);
+renderElement(siteListEvents.element, new EventEditView(events[0]), RenderPosition.BEFOREEND);
+renderElement(siteListEvents.element, new EventNewView(events[1]), RenderPosition.BEFOREEND);
 
 for (let i = 2; i < TASK_COUNT; i++) {
-  renderTemplate(siteListEvents, createEventTemplate(events[i]), RenderPosition.BEFOREEND);
+  renderElement(siteListEvents.element, new EventView(events[i]), RenderPosition.BEFOREEND);
 }
 
 
