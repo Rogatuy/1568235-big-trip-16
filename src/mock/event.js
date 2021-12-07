@@ -1,4 +1,4 @@
-import { getRandomInt, getFirstWordOfString, getRandomElementsArray,generateRandomElementOfArray } from '../util';
+import { getRandomInt, getFirstWordOfString, getRandomElementsArray,generateRandomElementOfArray } from '../utils/common';
 import dayjs from 'dayjs';
 
 export const TYPE_OF_POINT = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];

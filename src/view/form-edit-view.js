@@ -1,6 +1,6 @@
 import {TYPE_OF_POINT} from '../mock/event.js';
 import {createEventOfferTemplate} from './form-new-view.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 
 export const createEventEditTypesTemplate = (currentType) => {
   const types = TYPE_OF_POINT;
@@ -103,27 +103,35 @@ const createFormEditTemplate = (event) => {
   </li>`;
 };
 
-export default class EventEditView {
-  #element = null;
+export default class EventEditView extends AbstractView {
   #event = null;
 
   constructor(event = BLANK_EVENT) {
+    super();
     this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createFormEditTemplate(this.#event);
   }
 
-  removeElement() {
-    this.#element = null;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 }

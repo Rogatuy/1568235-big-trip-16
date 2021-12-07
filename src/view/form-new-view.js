@@ -1,5 +1,5 @@
 import {createEventEditTypesTemplate} from './form-edit-view.js';
-import {createElement} from '../render.js';
+import AbstractView from './abstract-view.js';
 import {BLANK_EVENT} from './form-edit-view.js';
 
 const createEventNewPhotosTemplate = (arrayOfPictures) => {
@@ -97,27 +97,15 @@ const createFormNewEventTemplate = (event) => {
 </li>`;
 };
 
-export default class EventNewView {
-  #element = null;
+export default class EventNewView extends AbstractView{
   #event = null;
 
   constructor(event = BLANK_EVENT) {
+    super();
     this.#event = event;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createFormNewEventTemplate(this.#event);
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
