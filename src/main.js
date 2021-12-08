@@ -11,7 +11,7 @@ import {generateEvent} from './mock/event.js';
 import BoardView from './view/board-view.js';
 import NoEventView from './view/no-event-view.js';
 
-const TASK_COUNT = 20;
+const TASK_COUNT = 5;
 
 const events = Array.from({length: TASK_COUNT}, generateEvent);
 
@@ -73,12 +73,12 @@ const renderBoard = (boardContainer, boardEvents) => {
 
   const siteListEvents = new EventListView();
   render(boardComponent, siteListEvents, RenderPosition.BEFOREEND);
-  render(siteListEvents, new EventNewView(events[0]), RenderPosition.BEFOREEND);
 
   if (boardEvents.length === 0) {
     render(siteListEvents, new NoEventView(), RenderPosition.BEFOREEND);
   } else {
     render(boardComponent, new SortView(), RenderPosition.AFTERBEGIN);
+    render(siteListEvents, new EventNewView(events[0]), RenderPosition.BEFOREEND);
     for (let i = 0; i < TASK_COUNT; i++) {
       renderEvent(siteListEvents.element, events[i]);
     }
