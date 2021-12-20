@@ -1,5 +1,6 @@
 import { getRandomInt, getFirstWordOfString, getRandomElementsArray,generateRandomElementOfArray } from '../utils/common';
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 
 export const TYPE_OF_POINT = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 const CITY = ['Barcelona', 'Paris', 'Mardid'];
@@ -56,7 +57,7 @@ const generateTimeDifference = (startTime, endTime) => {
   const differenceTimeMinute = dayjs(endTime).diff(startTime, 'minute');
   switch(true) {
     case (differenceTimeMinute < 60):
-      resultMinutes = `${differenceTimeMinute  }M`;
+      resultTime = `${differenceTimeMinute  }M`;
       break;
     case (differenceTimeMinute < 1440):
       resultHours = parseInt(differenceTimeMinute/60, 10);
@@ -138,6 +139,9 @@ export const generateEvent = () => {
   const pictures = generatePhotos();
   const type = generateRandomElementOfArray(TYPE_OF_POINT);
   return {
+    id: nanoid(),
+    startDate,
+    endDate,
     dateDayOutsideTegEvent,
     dateDayInsideTegEvent,
     startDateOutsideTegEvent,
