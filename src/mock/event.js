@@ -126,6 +126,7 @@ const generateOfferEvent = (typeOfEvent) => {
 
 export const generateEvent = () => {
   const startDate = generateDate();
+  const dueDate = dayjs().format('DD/MM/YY HH:mm');
   const startDateOutsideTegEvent = dayjs(startDate).format('HH:mm');
   const startDateInsideTegEvent = dayjs(startDate).format('YYYY-MM-DDTHH:mm');
   const startDateInsideTegFormEdit = dayjs(startDate).format('DD/MM/YY HH:mm');
@@ -142,6 +143,7 @@ export const generateEvent = () => {
     id: nanoid(),
     startDate,
     endDate,
+    dueDate,
     dateDayOutsideTegEvent,
     dateDayInsideTegEvent,
     startDateOutsideTegEvent,

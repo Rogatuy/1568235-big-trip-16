@@ -1,6 +1,9 @@
 import {TYPE_OF_POINT} from '../mock/event.js';
 import {createEventOfferTemplate} from './form-new-view.js';
 import SmartView from './smart-view.js';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export const createEventEditTypesTemplate = (currentType) => {
   const types = TYPE_OF_POINT;
@@ -30,7 +33,7 @@ export const BLANK_EVENT = {
 };
 
 const createFormEditTemplate = (event) => {
-  const {type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
+  const {dueDate, type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const offersTemplate = createEventOfferTemplate(offer);
   const isSubmitDisabled = price && (price > 0);
@@ -66,10 +69,10 @@ const createFormEditTemplate = (event) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateInsideTegFormEdit}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateInsideTegFormEdit}" placeholder="${dueDate}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateInsideTegFormEdit}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateInsideTegFormEdit}" placeholder="${dueDate}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -105,7 +108,7 @@ const createFormEditTemplate = (event) => {
 };
 
 export default class EventEditView extends SmartView {
-  #event = null;
+  #datepicker = null;
 
   constructor(event = BLANK_EVENT) {
     super();
@@ -113,6 +116,7 @@ export default class EventEditView extends SmartView {
 
 
     this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
@@ -127,12 +131,32 @@ export default class EventEditView extends SmartView {
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.formSubmit);
   }
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  #setDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.event__input--time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dueDate,
+        onChange: this.#dueDateChangeHandler,
+      }
+    );
+  }
+
+  #dueDateChangeHandler = ([userDate]) => {
+    this.updateData({
+      dueDate: userDate,
+    });
   }
 
   #setInnerHandlers = () => {
