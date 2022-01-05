@@ -156,7 +156,7 @@ export const generateEvent = () => {
     offer: generateOfferEvent(type),
     destination: generateRandomElementOfArray(CITY),
     description: generateDescription(),
-    price: getRandomInt(0, 1000),
+    price: getRandomInt(0, 100),
     isFavorite: Boolean(getRandomInt(0, 1)),
   };
 };

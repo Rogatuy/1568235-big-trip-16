@@ -1,6 +1,6 @@
 import {TYPE_OF_POINT} from '../mock/event.js';
 import {createEventOfferTemplate} from './form-new-view.js';
-import AbstractView from './abstract-view.js';
+import SmartView from './smart-view.js';
 
 export const createEventEditTypesTemplate = (currentType) => {
   const types = TYPE_OF_POINT;
@@ -33,6 +33,7 @@ const createFormEditTemplate = (event) => {
   const {type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const offersTemplate = createEventOfferTemplate(offer);
+  const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
@@ -79,7 +80,7 @@ const createFormEditTemplate = (event) => {
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${price}>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? '' : 'disabled'}>Save</button>
         <button class="event__reset-btn" type="reset">Delete</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -103,16 +104,30 @@ const createFormEditTemplate = (event) => {
   </li>`;
 };
 
-export default class EventEditView extends AbstractView {
+export default class EventEditView extends SmartView {
   #event = null;
 
   constructor(event = BLANK_EVENT) {
     super();
-    this.#event = event;
+    this._data = EventEditView.parseEventToData(event);
+
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createFormEditTemplate(this.#event);
+    return createFormEditTemplate(this._data);
+  }
+
+  reset = (event) => {
+    this.updateData(
+      EventEditView.parseEventToData(event),
+    );
+  }
+
+  restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -120,9 +135,30 @@ export default class EventEditView extends AbstractView {
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
   }
 
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('input', this.#priceInputHandler);
+  }
+
+  #typeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.value,
+    });
+  }
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value,
+    }, true);
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(EventEditView.parseDataToEvent(this._data));
   }
 
   setEditClickHandler = (callback) => {
@@ -134,4 +170,15 @@ export default class EventEditView extends AbstractView {
     evt.preventDefault();
     this._callback.editClick();
   }
+
+  static parseEventToData = (event) => ({...event,
+
+  });
+
+  static parseDataToEvent = (data) => {
+    const event = {...data};
+
+    return event;
+  }
 }
+
