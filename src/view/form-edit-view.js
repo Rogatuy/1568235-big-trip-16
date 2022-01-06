@@ -33,12 +33,12 @@ export const BLANK_EVENT = {
 };
 
 const createFormEditTemplate = (event) => {
-  const {dueDate, type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
+  const {type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const offersTemplate = createEventOfferTemplate(offer);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
-    <form class="event event--edit" action="#" method="post">
+    <form class="event event--edit" action="#" method="post" autocomplete="off">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -69,10 +69,10 @@ const createFormEditTemplate = (event) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateInsideTegFormEdit}" placeholder="${dueDate}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateInsideTegFormEdit}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateInsideTegFormEdit}" placeholder="${dueDate}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateInsideTegFormEdit}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -138,7 +138,7 @@ export default class EventEditView extends SmartView {
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#formSubmitHandler);
   }
 
   #setDatepicker = () => {
@@ -148,15 +148,16 @@ export default class EventEditView extends SmartView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._data.dueDate,
-        onChange: this.#dueDateChangeHandler,
+        onChange: this.#dueDateChangeHandler
       }
     );
   }
 
   #dueDateChangeHandler = ([userDate]) => {
     this.updateData({
-      dueDate: userDate,
+      startDateInsideTegFormEdit: userDate, //почему-то не находит эту пару ключ, хотя внизу type, например, нашел
     });
+    console.log(startDateInsideTegFormEdit);
   }
 
   #setInnerHandlers = () => {

@@ -2,7 +2,7 @@ import { getRandomInt, getFirstWordOfString, getRandomElementsArray,generateRand
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 
-export const TYPE_OF_POINT = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+export const TYPE_OF_POINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const CITY = ['Barcelona', 'Paris', 'Mardid'];
 const DESCRIPTION = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

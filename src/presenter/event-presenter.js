@@ -26,7 +26,6 @@ export default class EventPresenter {
 
   init = (event) => {
     this.#event = event;
-
     const prevEventComponent = this.#eventComponent;
     const prevEventEditComponent = this.#eventEditComponent;
 

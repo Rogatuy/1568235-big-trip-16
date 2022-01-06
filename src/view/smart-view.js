@@ -19,7 +19,7 @@ export default class SmartView extends AbstractView {
 
   updateElement = () => {
     const prevElement = this.element;
-    const parent = prevElement.parentElement; //не понимаю эту строчку. понимаю, что объявление переменной)))
+    const parent = prevElement.parentElement;
     this.removeElement();
 
     const newElement = this.element;

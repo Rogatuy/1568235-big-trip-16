@@ -5,7 +5,7 @@ import {render, RenderPosition} from './utils/render.js';
 import {generateEvent} from './mock/event.js';
 import BoardPresenter from './presenter/board-presenter.js';
 
-const TASK_COUNT = 8;
+const TASK_COUNT = 2;
 
 const events = Array.from({length: TASK_COUNT}, generateEvent);
 
