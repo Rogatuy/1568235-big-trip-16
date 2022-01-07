@@ -2,6 +2,7 @@ import {TYPE_OF_POINT} from '../mock/event.js';
 import {createEventOfferTemplate} from './form-new-view.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
+import dayjs from 'dayjs';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -14,15 +15,8 @@ export const createEventEditTypesTemplate = (currentType) => {
 };
 
 export const BLANK_EVENT = {
-  dateDayOutsideTegEvent: null,
-  dateDayInsideTegEvent: null,
-  startDateOutsideTegEvent: null,
-  startDateInsideTegEvent: null,
-  startDateInsideTegFormEdit: null,
-  endDateOutsideTegEvent: null,
-  endDateInsideTegEvent: null,
-  endDateInsideTegFormEdit: null,
-  timeDifference: null,
+  startDate: null,
+  endDate: null,
   pictures: [],
   type: 'bus',
   offer: {},
@@ -33,12 +27,12 @@ export const BLANK_EVENT = {
 };
 
 const createFormEditTemplate = (event) => {
-  const {type, destination, price, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, offer} = event;
+  const {type, destination, price, description, startDate, endDate, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const offersTemplate = createEventOfferTemplate(offer);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
-    <form class="event event--edit" action="#" method="post" autocomplete="off">
+    <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -59,7 +53,7 @@ const createFormEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1" required>
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -69,10 +63,10 @@ const createFormEditTemplate = (event) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateInsideTegFormEdit}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(startDate).format('DD/MM/YY HH:mm')}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateInsideTegFormEdit}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(endDate).format('DD/MM/YY HH:mm')}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -108,7 +102,8 @@ const createFormEditTemplate = (event) => {
 };
 
 export default class EventEditView extends SmartView {
-  #datepicker = null;
+  #startdatepicker = null;
+  #enddatepicker = null;
 
   constructor(event = BLANK_EVENT) {
     super();
@@ -116,7 +111,8 @@ export default class EventEditView extends SmartView {
 
 
     this.#setInnerHandlers();
-    this.#setDatepicker();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
   }
 
   get template() {
@@ -131,7 +127,8 @@ export default class EventEditView extends SmartView {
 
   restoreHandlers = () => {
     this.#setInnerHandlers();
-    this.#setDatepicker();
+    this.#setStartDatepicker();
+    this.#setEndDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.formSubmit);
   }
@@ -141,30 +138,49 @@ export default class EventEditView extends SmartView {
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#formSubmitHandler);
   }
 
-  #setDatepicker = () => {
-    this.#datepicker = flatpickr(
-      this.element.querySelector('.event__input--time'),
+  #setStartDatepicker = () => {
+    this.#startdatepicker = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._data.dueDate,
-        onChange: this.#dueDateChangeHandler
+        defaultDate: this._data.startDate,
+        onChange: this.#startDateChangeHandler,
       }
     );
   }
 
-  #dueDateChangeHandler = ([userDate]) => {
+  #setEndDatepicker = () => {
+    this.#enddatepicker = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.endDate,
+        onChange: this.#endDateChangeHandler,
+      }
+    );
+  }
+
+  #startDateChangeHandler = ([userDate]) => {
     this.updateData({
-      startDateInsideTegFormEdit: userDate, //почему-то не находит эту пару ключ, хотя внизу type, например, нашел
+      startDate: userDate,
     });
-    console.log(startDateInsideTegFormEdit);
+  }
+
+  #endDateChangeHandler = ([userDates]) => {
+    this.updateData({
+      endDate: userDates,
+    });
   }
 
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--price')
-      .addEventListener('input', this.#priceInputHandler);
+      .addEventListener('change', this.#priceChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
   }
 
   #typeChangeHandler = (evt) => {
@@ -174,11 +190,18 @@ export default class EventEditView extends SmartView {
     });
   }
 
-  #priceInputHandler = (evt) => {
+  #priceChangeHandler = (evt) => {
     evt.preventDefault();
     this.updateData({
       price: evt.target.value,
-    }, true);
+    });
+  }
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateData({
+      destination: evt.target.value,
+    });
   }
 
   #formSubmitHandler = (evt) => {
@@ -196,13 +219,13 @@ export default class EventEditView extends SmartView {
     this._callback.editClick();
   }
 
-  static parseEventToData = (event) => ({...event,
-
-  });
+  static parseEventToData = (event) => {
+    const data = {...event};
+    return data;
+  };
 
   static parseDataToEvent = (data) => {
     const event = {...data};
-
     return event;
   }
 }

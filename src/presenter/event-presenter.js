@@ -95,11 +95,13 @@ export default class EventPresenter {
     this.#replaceEventToForm();
   }
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (event) => {
+    this.#changeData(event);
     this.#replaceFormToEvent();
   }
 
   #handleFormClick = () => {
     this.#replaceFormToEvent();
+    // this.#eventComponent.reset(this.#event);
   }
 }
