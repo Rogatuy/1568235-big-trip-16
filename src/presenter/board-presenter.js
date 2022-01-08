@@ -38,6 +38,7 @@ export default class BoardPresenter {
   }
 
   #handleEventChange = (updatedEvent) => {
+    console.log(updatedEvent);
     this.#boardEvents = updateItem(this.#boardEvents, updatedEvent);
     this.#sourcedBoardEvents = updateItem(this.#sourcedBoardEvents, updatedEvent);
     this.#eventPresenter.get(updatedEvent.id).init(updatedEvent);

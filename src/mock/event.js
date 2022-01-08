@@ -45,7 +45,7 @@ const generateDateEnd = (startDate) => {
   const daysGap = getRandomInt(0, MAX_DAY_GAP);
   const hoursGap = getRandomInt(0, MAX_HOURS_GAP);
   const minutesGap = getRandomInt(0, MAX_MINUTES_GAP);
-  return dayjs(startDate).add(daysGap, 'day').add(hoursGap, 'hours').add(minutesGap, 'minutes');
+  return dayjs(startDate).add(daysGap, 'day').add(hoursGap, 'hours').add(minutesGap, 'minutes').toDate();
 };
 
 const generatePhotos = () => {
@@ -92,7 +92,6 @@ const generateOfferEvent = (typeOfEvent) => {
 
 export const generateEvent = () => {
   const startDate = generateDate();
-  const dueDate = dayjs().format('DD/MM/YY HH:mm');
   const endDate = generateDateEnd(startDate);
   const pictures = generatePhotos();
   const type = generateRandomElementOfArray(TYPE_OF_POINT);
@@ -100,7 +99,6 @@ export const generateEvent = () => {
     id: nanoid(),
     startDate,
     endDate,
-    dueDate,
     pictures,
     type: type,
     offer: generateOfferEvent(type),

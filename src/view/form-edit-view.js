@@ -32,7 +32,7 @@ const createFormEditTemplate = (event) => {
   const offersTemplate = createEventOfferTemplate(offer);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
-    <form class="event event--edit" action="#" method="post">
+    <form class="event event--edit" action="#" method="post" autocomplete="off">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -74,7 +74,7 @@ const createFormEditTemplate = (event) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${price}>
+          <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" step="1" name="event-price" value=${price}>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? '' : 'disabled'}>Save</button>
@@ -109,7 +109,7 @@ export default class EventEditView extends SmartView {
     super();
     this._data = EventEditView.parseEventToData(event);
 
-
+    this._lastFocus = null;
     this.#setInnerHandlers();
     this.#setStartDatepicker();
     this.#setEndDatepicker();
@@ -131,6 +131,10 @@ export default class EventEditView extends SmartView {
     this.#setEndDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.formSubmit);
+    if (this._lastFocus) {
+      document.querySelector(`#${this._lastFocus}`).focus();
+      this._lastFocus = null;
+    }
   }
 
   setFormSubmitHandler = (callback) => {
@@ -168,9 +172,9 @@ export default class EventEditView extends SmartView {
     });
   }
 
-  #endDateChangeHandler = ([userDates]) => {
+  #endDateChangeHandler = ([userDate]) => {
     this.updateData({
-      endDate: userDates,
+      endDate: userDate,
     });
   }
 
@@ -178,7 +182,7 @@ export default class EventEditView extends SmartView {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--price')
-      .addEventListener('change', this.#priceChangeHandler);
+      .addEventListener('input', this.#priceChangeHandler);
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
   }
@@ -192,6 +196,7 @@ export default class EventEditView extends SmartView {
 
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
+    this._lastFocus = evt.target.id;
     this.updateData({
       price: evt.target.value,
     });

@@ -101,7 +101,7 @@ export default class EventPresenter {
   }
 
   #handleFormClick = () => {
+    this.#eventComponent.reset(this.#event);
     this.#replaceFormToEvent();
-    // this.#eventComponent.reset(this.#event);
   }
 }
