@@ -1,6 +1,7 @@
 import {createEventEditTypesTemplate} from './form-edit-view.js';
 import AbstractView from './abstract-view.js';
 import {BLANK_EVENT} from './form-edit-view.js';
+import dayjs from 'dayjs';
 
 const createEventNewPhotosTemplate = (arrayOfPictures) => {
   const arrayOfPicture = arrayOfPictures;
@@ -20,7 +21,7 @@ export const createEventOfferTemplate = (objectOfOffer) => {
 };
 
 const createFormNewEventTemplate = (event) => {
-  const {type, price, destination, description, startDateInsideTegFormEdit, endDateInsideTegFormEdit, pictures, offer} = event;
+  const {type, price, destination, description, pictures, offer} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const photosTemplate = createEventNewPhotosTemplate(pictures);
   const offersTemplate = createEventOfferTemplate(offer);
@@ -56,10 +57,10 @@ const createFormNewEventTemplate = (event) => {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateInsideTegFormEdit}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs().format('DD/MM/YY HH:mm')}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateInsideTegFormEdit}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs().format('DD/MM/YY HH:mm')}">
       </div>
 
       <div class="event__field-group  event__field-group--price">

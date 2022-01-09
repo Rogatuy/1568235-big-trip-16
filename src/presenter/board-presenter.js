@@ -7,7 +7,6 @@ import NoEventView from '../view/no-event-view.js';
 import {updateItem} from '../utils/common.js';
 import {sortEventPrice, sortEventTime} from '../utils/event.js';
 import {SortType} from '../const.js';
-// import EventNewView from '../view/form-new-view.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -16,7 +15,6 @@ export default class BoardPresenter {
   #sortComponent = new SortView();
   #eventListComponent = new EventListView();
   #noEventComponent = new NoEventView();
-  //#newEventComponent = new EventNewView()
 
   #boardEvents = [];
   #eventPresenter = new Map();
@@ -29,10 +27,9 @@ export default class BoardPresenter {
 
   init = (boardEvents) => {
     this.#boardEvents = [...boardEvents];
-    this.#sourcedBoardEvents = [...boardEvents]; //пока что, это не верно
+    this.#sourcedBoardEvents = [...boardEvents];
     render(this.#boardContainer, this.#boardComponent, RenderPosition.BEFOREEND);
     render(this.#boardComponent, this.#eventListComponent, RenderPosition.BEFOREEND);
-
     this.#renderBoard();
   }
 
@@ -41,6 +38,7 @@ export default class BoardPresenter {
   }
 
   #handleEventChange = (updatedEvent) => {
+    console.log(updatedEvent);
     this.#boardEvents = updateItem(this.#boardEvents, updatedEvent);
     this.#sourcedBoardEvents = updateItem(this.#sourcedBoardEvents, updatedEvent);
     this.#eventPresenter.get(updatedEvent.id).init(updatedEvent);
@@ -54,9 +52,11 @@ export default class BoardPresenter {
       case SortType.TIME:
         this.#boardEvents.sort(sortEventTime);
         break;
+      case SortType.DAY:
+        this.#boardEvents = [...this.#sourcedBoardEvents];
+        break;
       default:
         this.#boardEvents = [...this.#sourcedBoardEvents];
-
     }
 
     this.#currentSortType = sortType;

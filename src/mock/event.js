@@ -2,7 +2,7 @@ import { getRandomInt, getFirstWordOfString, getRandomElementsArray,generateRand
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 
-export const TYPE_OF_POINT = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+export const TYPE_OF_POINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const CITY = ['Barcelona', 'Paris', 'Mardid'];
 const DESCRIPTION = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -45,41 +45,7 @@ const generateDateEnd = (startDate) => {
   const daysGap = getRandomInt(0, MAX_DAY_GAP);
   const hoursGap = getRandomInt(0, MAX_HOURS_GAP);
   const minutesGap = getRandomInt(0, MAX_MINUTES_GAP);
-  return dayjs(startDate).add(daysGap, 'day').add(hoursGap, 'hours').add(minutesGap, 'minutes');
-};
-
-const generateTimeDifference = (startTime, endTime) => {
-  let resultTime;
-  let resultMinutes;
-  let resultHours;
-  let resultDays;
-  let remainMinutes;
-  const differenceTimeMinute = dayjs(endTime).diff(startTime, 'minute');
-  switch(true) {
-    case (differenceTimeMinute < 60):
-      resultTime = `${differenceTimeMinute  }M`;
-      break;
-    case (differenceTimeMinute < 1440):
-      resultHours = parseInt(differenceTimeMinute/60, 10);
-      resultMinutes = differenceTimeMinute - resultHours*60;
-      resultTime = (resultMinutes !== 0) ? (`${resultHours}H ${resultMinutes}M`) : (`${resultHours}H`);
-      break;
-    case (differenceTimeMinute >= 1440):
-      resultDays = parseInt(differenceTimeMinute/1440, 10);
-      remainMinutes = differenceTimeMinute-(resultDays*1440);
-      resultHours = parseInt(remainMinutes/60, 10);
-      resultMinutes = remainMinutes - resultHours*60;
-      if ((resultMinutes !== 0) && (resultHours !== 0)) {
-        resultTime = `${resultDays  }D ${resultHours}H ${resultMinutes}M`;
-      } else {
-        if (resultHours === 0) {
-          resultTime = `${resultDays  }D ${resultMinutes}M`;
-        } else {
-          resultTime = `${resultDays  }D ${resultHours}H`;
-        }
-        break; }
-  }
-  return resultTime;
+  return dayjs(startDate).add(daysGap, 'day').add(hoursGap, 'hours').add(minutesGap, 'minutes').toDate();
 };
 
 const generatePhotos = () => {
@@ -126,37 +92,19 @@ const generateOfferEvent = (typeOfEvent) => {
 
 export const generateEvent = () => {
   const startDate = generateDate();
-  const startDateOutsideTegEvent = dayjs(startDate).format('HH:mm');
-  const startDateInsideTegEvent = dayjs(startDate).format('YYYY-MM-DDTHH:mm');
-  const startDateInsideTegFormEdit = dayjs(startDate).format('DD/MM/YY HH:mm');
   const endDate = generateDateEnd(startDate);
-  const endDateOutsideTegEvent = dayjs(endDate).format('HH:mm');
-  const endDateInsideTegEvent = dayjs(endDate).format('YYYY-MM-DDTHH:mm');
-  const endDateInsideTegFormEdit = dayjs(endDate).format('DD/MM/YY HH:mm');
-  const dateDayOutsideTegEvent = dayjs(startDate).format('MMM DD');
-  const dateDayInsideTegEvent = dayjs(startDate).format('DD-MM-YYYY');
-  const timeDifference = generateTimeDifference(startDate, endDate);
   const pictures = generatePhotos();
   const type = generateRandomElementOfArray(TYPE_OF_POINT);
   return {
     id: nanoid(),
     startDate,
     endDate,
-    dateDayOutsideTegEvent,
-    dateDayInsideTegEvent,
-    startDateOutsideTegEvent,
-    startDateInsideTegEvent,
-    startDateInsideTegFormEdit,
-    endDateOutsideTegEvent,
-    endDateInsideTegEvent,
-    endDateInsideTegFormEdit,
-    timeDifference,
     pictures,
     type: type,
     offer: generateOfferEvent(type),
     destination: generateRandomElementOfArray(CITY),
     description: generateDescription(),
-    price: getRandomInt(0, 1000),
+    price: getRandomInt(0, 100),
     isFavorite: Boolean(getRandomInt(0, 1)),
   };
 };

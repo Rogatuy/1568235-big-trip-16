@@ -26,7 +26,6 @@ export default class EventPresenter {
 
   init = (event) => {
     this.#event = event;
-
     const prevEventComponent = this.#eventComponent;
     const prevEventEditComponent = this.#eventEditComponent;
 
@@ -83,6 +82,7 @@ export default class EventPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#eventEditComponent.reset(this.#event);
       this.#replaceFormToEvent();
     }
   }
@@ -95,11 +95,13 @@ export default class EventPresenter {
     this.#replaceEventToForm();
   }
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (event) => {
+    this.#changeData(event);
     this.#replaceFormToEvent();
   }
 
   #handleFormClick = () => {
+    this.#eventComponent.reset(this.#event);
     this.#replaceFormToEvent();
   }
 }

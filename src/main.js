@@ -5,9 +5,7 @@ import {render, RenderPosition} from './utils/render.js';
 import {generateEvent} from './mock/event.js';
 import BoardPresenter from './presenter/board-presenter.js';
 
-// import EventNewView from './view/form-new-view.js';
-
-const TASK_COUNT = 8;
+const TASK_COUNT = 3;
 
 const events = Array.from({length: TASK_COUNT}, generateEvent);
 
@@ -19,7 +17,6 @@ const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-main');
 const siteMainElement = siteBodyElement.querySelector('.page-main');
 const siteEventsElement = siteMainElement.querySelector('.trip-events');
 
-//render(eventListComponent, new EventNewView(events[0]), RenderPosition.BEFOREEND);
 const boardPresenter = new BoardPresenter(siteEventsElement);
 
 render(siteHeaderMenuElement, new SiteMenuView(), RenderPosition.BEFOREEND);

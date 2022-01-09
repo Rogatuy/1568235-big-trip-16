@@ -633,6 +633,7 @@ main {
 
 .event__type-label {
   position: relative;
+  text-transform: capitalize;
   display: block;
   padding: 5px 10px 5px 62px;
   font-size: 17px;

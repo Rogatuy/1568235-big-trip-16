@@ -1,21 +1,24 @@
 import AbstractView from './abstract-view.js';
+import dayjs from 'dayjs';
+import {generateTimeDifference} from '../utils/event.js';
 
 const createEventTemplate = (event) => {
-  const {dateDayOutsideTegEvent, dateDayInsideTegEvent, startDateOutsideTegEvent, startDateInsideTegEvent, endDateOutsideTegEvent, endDateInsideTegEvent, type, destination, price, timeDifference, isFavorite} = event;
+  const {startDate, endDate, type, destination, price, isFavorite} = event;
+  const timeDifference = generateTimeDifference(startDate, endDate);
 
   const buttonFavoriteClassName = (isFavorite) ? 'event__favorite-btn--active' : '';
   return `<li class="trip-events__item">
   <div class="event">
-    <time class="event__date" datetime=${dateDayInsideTegEvent}>${dateDayOutsideTegEvent}</time>
+    <time class="event__date" datetime="${dayjs(startDate).format('YYYY-MM-D')}">${dayjs(startDate).format('MMM D')}</time>
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="./img/icons/${type}.png" alt="Event type icon">
     </div>
     <h3 class="event__title">${type} ${destination}</h3>
     <div class="event__schedule">
       <p class="event__time">
-        <time class="event__start-time" datetime=${startDateInsideTegEvent}>${startDateOutsideTegEvent}</time>
+        <time class="event__start-time" datetime="${dayjs(startDate).format('YYYY-MM-DTHH:mm')}">${dayjs(startDate).format('HH:mm')}</time>
         &mdash;
-        <time class="event__end-time" datetime=${endDateInsideTegEvent}>${endDateOutsideTegEvent}</time>
+        <time class="event__end-time" datetime="${dayjs(endDate).format('YYYY-MM-DTHH:mm')}">${dayjs(endDate).format('HH:mm')}</time>
       </p>
       <p class="event__duration">${timeDifference}</p>
     </div>
