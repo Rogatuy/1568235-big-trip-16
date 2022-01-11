@@ -3,7 +3,7 @@ import AbstractObservable from '../utils/abstract-observable.js';
 export default class EventsModel extends AbstractObservable {
   #events= [];
 
-  set events (events) {
+  set events(events) {
     this.#events = [...events];
   }
 

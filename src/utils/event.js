@@ -3,8 +3,8 @@ import dayjs from 'dayjs';
 export const sortEventPrice = (eventA, eventB) => (eventB.price - eventA.price);
 
 export const sortEventTime = (eventA, eventB) => {
-  const timeEventA = dayjs(eventA.endDateInsideTegEvent).diff(dayjs(eventA.startDateInsideTegEvent));
-  const timeEventB = dayjs(eventB.endDateInsideTegEvent).diff(dayjs(eventB.startDateInsideTegEvent));
+  const timeEventA = dayjs(eventA.endDate).diff(dayjs(eventA.startDate));
+  const timeEventB = dayjs(eventB.endDate).diff(dayjs(eventB.startDate));
   let time;
   return time ?? (dayjs(timeEventB).diff(dayjs(timeEventA)));
 };

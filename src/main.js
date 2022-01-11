@@ -4,10 +4,14 @@ import FilterView from './view/filter-view.js';
 import {render, RenderPosition} from './utils/render.js';
 import {generateEvent} from './mock/event.js';
 import BoardPresenter from './presenter/board-presenter.js';
+import EventsModel from './model/events-model.js';
 
 const TASK_COUNT = 3;
 
 const events = Array.from({length: TASK_COUNT}, generateEvent);
+
+const eventsModel = new EventsModel();
+eventsModel.events = events;
 
 const siteBodyElement = document.querySelector('.page-body');
 const siteHeaderElement = siteBodyElement.querySelector('.page-header');
@@ -17,12 +21,13 @@ const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-main');
 const siteMainElement = siteBodyElement.querySelector('.page-main');
 const siteEventsElement = siteMainElement.querySelector('.trip-events');
 
-const boardPresenter = new BoardPresenter(siteEventsElement);
+const boardPresenter = new BoardPresenter(siteEventsElement, eventsModel);
 
 render(siteHeaderMenuElement, new SiteMenuView(), RenderPosition.BEFOREEND);
 render(siteHeaderInfoElement, new InfoView(), RenderPosition.AFTERBEGIN);
 render(siteHeaderFilterElement, new FilterView(), RenderPosition.BEFOREEND);
 
-boardPresenter.init(events);
+// boardPresenter.init(events);
+boardPresenter.init();
 
 

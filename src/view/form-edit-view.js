@@ -130,7 +130,7 @@ export default class EventEditView extends SmartView {
     this.#setStartDatepicker();
     this.#setEndDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setEditClickHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.editClick);
     if (this._lastFocus) {
       document.querySelector(`#${this._lastFocus}`).focus();
       this._lastFocus = null;

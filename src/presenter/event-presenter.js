@@ -1,6 +1,8 @@
 import EventEditView from '../view/form-edit-view.js';
 import EventView from '../view/event-view.js';
 import { render, RenderPosition, replace, remove } from '../utils/render';
+import { UpdateType, UserAction } from '../const.js';
+
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -89,6 +91,11 @@ export default class EventPresenter {
 
   #handleFavoriteClick = () => {
     this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
+    this.#changeData (
+      UserAction.UPDATE_TASK,
+      UpdateType.PATCH,
+      {...this.#event, isFavorite: !this.#event.isFavorite},
+    );
   }
 
   #handleEditClick = () => {
@@ -96,12 +103,16 @@ export default class EventPresenter {
   }
 
   #handleFormSubmit = (event) => {
-    this.#changeData(event);
+    this.#changeData(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      event,
+    );
     this.#replaceFormToEvent();
   }
 
   #handleFormClick = () => {
-    this.#eventComponent.reset(this.#event);
+    this.#eventEditComponent.reset(this.#event);
     this.#replaceFormToEvent();
   }
 }
