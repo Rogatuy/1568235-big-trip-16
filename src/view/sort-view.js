@@ -1,10 +1,10 @@
 import AbstractView from './abstract-view.js';
 import {SortType} from '../const.js';
 
-const createSortTemplate = () => (
+const createSortTemplate = (currentSortType) => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--${SortType.DAY}">
-      <input id="sort-${SortType.DAY}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${SortType.DAY}" checked>
+      <input id="sort-${SortType.DAY}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${SortType.DAY}" ${currentSortType === SortType.DAY ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-${SortType.DAY}">${SortType.DAY}</label>
     </div>
 
@@ -14,12 +14,12 @@ const createSortTemplate = () => (
     </div>
 
     <div class="trip-sort__item  trip-sort__item--${SortType.TIME}">
-      <input id="sort-${SortType.TIME}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${SortType.TIME}">
+      <input id="sort-${SortType.TIME}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${SortType.TIME}" ${currentSortType === SortType.TIME ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-${SortType.TIME}">${SortType.TIME}</label>
     </div>
 
     <div class="trip-sort__item  trip-sort__item--${SortType.PRICE}">
-      <input id="sort-${SortType.PRICE}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${SortType.PRICE}">
+      <input id="sort-${SortType.PRICE}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${SortType.PRICE}" ${currentSortType === SortType.PRICE ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-${SortType.PRICE}">${SortType.PRICE}</label>
     </div>
 
@@ -31,8 +31,15 @@ const createSortTemplate = () => (
 );
 
 export default class SortView extends AbstractView {
+  #currentSortType = null;
+
+  constructor(currentSortType) {
+    super();
+    this.#currentSortType = currentSortType;
+  }
+
   get template() {
-    return createSortTemplate();
+    return createSortTemplate(this.#currentSortType);
   }
 
   setSortTypeChangeHandler = (callback) => {

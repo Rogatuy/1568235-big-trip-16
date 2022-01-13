@@ -135,11 +135,17 @@ export default class EventEditView extends SmartView {
       document.querySelector(`#${this._lastFocus}`).focus();
       this._lastFocus = null;
     }
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#formSubmitHandler);
+  }
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
   }
 
   #setStartDatepicker = () => {
@@ -222,6 +228,11 @@ export default class EventEditView extends SmartView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.editClick();
+  }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEditView.parseDataToEvent(this._data));
   }
 
   static parseEventToData = (event) => {

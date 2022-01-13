@@ -2,6 +2,7 @@ import EventEditView from '../view/form-edit-view.js';
 import EventView from '../view/event-view.js';
 import { render, RenderPosition, replace, remove } from '../utils/render';
 import { UpdateType, UserAction } from '../const.js';
+import { isDatesEqual } from '../utils/event.js';
 
 
 const Mode = {
@@ -38,6 +39,7 @@ export default class EventPresenter {
     this.#eventComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#eventEditComponent.setEditClickHandler(this.#handleFormClick);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventListContainer, this.#eventComponent, RenderPosition.BEFOREEND);
@@ -92,7 +94,7 @@ export default class EventPresenter {
   #handleFavoriteClick = () => {
     this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
     this.#changeData (
-      UserAction.UPDATE_TASK,
+      UserAction.UPDATE_EVENT,
       UpdateType.PATCH,
       {...this.#event, isFavorite: !this.#event.isFavorite},
     );
@@ -102,13 +104,23 @@ export default class EventPresenter {
     this.#replaceEventToForm();
   }
 
-  #handleFormSubmit = (event) => {
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate = !isDatesEqual(this.#event.startDate, update.startDate);
+
     this.#changeData(
-      UserAction.UPDATE_TASK,
+      UserAction.UPDATE_EVENT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
+    this.#replaceFormToEvent();
+  }
+
+  #handleDeleteClick = (event) => {
+    this.#changeData(
+      UserAction.DELETE_EVENT,
       UpdateType.MINOR,
       event,
     );
-    this.#replaceFormToEvent();
   }
 
   #handleFormClick = () => {

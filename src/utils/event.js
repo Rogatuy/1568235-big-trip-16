@@ -44,3 +44,9 @@ export const generateTimeDifference = (startTime, endTime) => {
       break; }
   return resultTime;
 };
+
+export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
+export const isEventFuture = (startDate) => dayjs(startDate).isSame(dayjs(), 'D') || dayjs(startDate).isAfter(dayjs(), 'D');
+export const isEventPast = (endDate) => dayjs(endDate).isBefore(dayjs(), 'D');
+export const isEventEverywhere = (startDate, endDate) => dayjs(startDate).isBefore(dayjs(), 'D') && dayjs(endDate).isAfter(dayjs(), 'D');
