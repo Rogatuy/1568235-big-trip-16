@@ -9,6 +9,7 @@ import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
 
 import EventPresenter from './event-presenter.js';
+import EventNewPresenter from './event-new-presenter.js';
 
 
 export default class BoardPresenter {
@@ -18,11 +19,11 @@ export default class BoardPresenter {
 
   #boardComponent = new BoardView();
   #eventListComponent = new EventListView();
-  // #noEventComponent = new NoEventView();
   #noEventComponent = null;
   #sortComponent = null;
 
   #eventPresenter = new Map();
+  #eventNewPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
@@ -31,8 +32,8 @@ export default class BoardPresenter {
     this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
 
-    this.#eventsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
+    this.#eventNewPresenter = new EventNewPresenter(this.#eventListComponent, this.#handleViewAction); //может быть не сюда, надо посмотреть
+
   }
 
   get events() {
@@ -53,10 +54,29 @@ export default class BoardPresenter {
   init = () => {
     render(this.#boardContainer, this.#boardComponent, RenderPosition.BEFOREEND);
     render(this.#boardComponent, this.#eventListComponent, RenderPosition.BEFOREEND);
+
+    this.#eventsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+
     this.#renderBoard();
   }
 
+  destroy = () => {
+    this.#clearBoard({resetSortType: true});
+
+    remove(this.#eventListComponent);
+    remove(this.#boardComponent);
+
+    this.#eventsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
+  }
+
+  createEvent = () => {
+    this.#eventNewPresenter.init();
+  }
+
   #handleModeChange = () => {
+    this.#eventNewPresenter.destroy();
     this.#eventPresenter.forEach((presenter) => presenter.resetView());
   }
 
@@ -123,6 +143,7 @@ export default class BoardPresenter {
   }
 
   #clearBoard = (resetSortType = false) => {
+    this.#eventNewPresenter.destroy();
     this.#eventPresenter.forEach((presenter) => presenter.destroy());
     this.#eventPresenter.clear();
 

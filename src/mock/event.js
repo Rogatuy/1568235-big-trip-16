@@ -1,8 +1,9 @@
 import { getRandomInt, getFirstWordOfString, getRandomElementsArray,generateRandomElementOfArray } from '../utils/common';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
+import { TYPE_OF_POINT } from '../const';
 
-export const TYPE_OF_POINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
 const CITY = ['Barcelona', 'Paris', 'Mardid'];
 const DESCRIPTION = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -95,13 +96,14 @@ export const generateEvent = () => {
   const endDate = generateDateEnd(startDate);
   const pictures = generatePhotos();
   const type = generateRandomElementOfArray(TYPE_OF_POINT);
+  const offer = generateOfferEvent(type);
   return {
     id: nanoid(),
     startDate,
     endDate,
     pictures,
     type: type,
-    offer: generateOfferEvent(type),
+    offer: offer,
     destination: generateRandomElementOfArray(CITY),
     description: generateDescription(),
     price: getRandomInt(0, 100),

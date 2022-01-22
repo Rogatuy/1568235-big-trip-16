@@ -1,8 +1,8 @@
-import {TYPE_OF_POINT} from '../mock/event.js';
-import {createEventOfferTemplate} from './form-new-view.js';
+import { TYPE_OF_POINT } from '../const.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
+import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -14,22 +14,47 @@ export const createEventEditTypesTemplate = (currentType) => {
     </div>`).join('');
 };
 
+const createEventOfferTemplate = (objectOfOffer) => {
+  const arrayOffers = objectOfOffer.offers;
+  return arrayOffers.map((array) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-"${array.titleForTeg}"-1" type="checkbox" name="event-offer-${array.titleForTeg}">
+  <label class="event__offer-label" for="event-offer-${array.titleForTeg}-1">
+    <span class="event__offer-title">${array.title}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${array.price}</span>
+  </label>
+</div>` ).join('');
+};
+
+const createEventNewPhotosTemplate = (arrayOfPictures) => {
+  const arrayOfPicture = arrayOfPictures;
+  return arrayOfPicture.map((array) => `<img class="event__photo" src="${array.src}" alt="${array.description}">`).join('');
+};
+
 export const BLANK_EVENT = {
-  startDate: null,
-  endDate: null,
-  pictures: [],
+  startDate: dayjs().format('DD/MM/YYYY'),
+  endDate: dayjs().format('DD/MM/YYYY'),
+  pictures: [{src:'http://picsum.photos/300/200?r=5', description: 'desc 1'}],
   type: 'bus',
-  offer: {},
-  destination: '',
-  description: '',
-  price: null,
+  offer:{
+    type: 'taxi',
+    offers: [
+      {title: 'desc twenty two',
+        titleForTeg: 'desc',
+        price: 500},
+    ],
+  },
+  destination: 'Barcelona',
+  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  price: 0,
   isFavorite: false
 };
 
 const createFormEditTemplate = (event) => {
-  const {type, destination, price, description, startDate, endDate, offer} = event;
+  const {type, destination, price, description, startDate, endDate, offer, pictures} = event;
   const typesTemplate = createEventEditTypesTemplate(type);
   const offersTemplate = createEventOfferTemplate(offer);
+  const photosTemplate = createEventNewPhotosTemplate(pictures);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post" autocomplete="off">
@@ -53,7 +78,7 @@ const createFormEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination} list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${he.encode(destination)} list="destination-list-1" required>
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -95,6 +120,13 @@ const createFormEditTemplate = (event) => {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+            ${photosTemplate}
+            </div>
+          </div>
+
         </section>
       </section>
     </form>
