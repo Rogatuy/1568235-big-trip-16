@@ -91,21 +91,26 @@ const generateOfferEvent = (typeOfEvent) => {
   return objectOffersEvent;
 };
 
+
 export const generateEvent = () => {
   const startDate = generateDate();
   const endDate = generateDateEnd(startDate);
-  const pictures = generatePhotos();
   const type = generateRandomElementOfArray(TYPE_OF_POINT);
   const offer = generateOfferEvent(type);
+  const destinationName = generateRandomElementOfArray(CITY);
+  const description = generateDescription();
+  const pictures = generatePhotos();
   return {
     id: nanoid(),
     startDate,
     endDate,
-    pictures,
     type: type,
-    offer: offer,
-    destination: generateRandomElementOfArray(CITY),
-    description: generateDescription(),
+    offers: offer,
+    destination: {
+      nameDestination: destinationName,
+      description: description,
+      pictures: pictures
+    },
     price: getRandomInt(0, 100),
     isFavorite: Boolean(getRandomInt(0, 1)),
   };

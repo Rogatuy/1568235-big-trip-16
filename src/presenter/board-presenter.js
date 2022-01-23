@@ -2,6 +2,7 @@ import SortView from '../view/sort-view.js';
 import EventListView from '../view/list-events-view.js';
 import BoardView from '../view/board-view.js';
 import NoEventView from '../view/no-event-view.js';
+import LoadingView from '../view/loading-view.js';
 
 import {render, remove, RenderPosition} from '../utils/render.js';
 import {sortEventPrice, sortEventTime} from '../utils/event.js';
@@ -19,6 +20,7 @@ export default class BoardPresenter {
 
   #boardComponent = new BoardView();
   #eventListComponent = new EventListView();
+  #loadingComponent = new LoadingView();
   #noEventComponent = null;
   #sortComponent = null;
 
@@ -26,6 +28,7 @@ export default class BoardPresenter {
   #eventNewPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor (boardContainer, eventsModel, filterModel) {
     this.#boardContainer = boardContainer;
@@ -107,6 +110,11 @@ export default class BoardPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   }
 
@@ -137,6 +145,11 @@ export default class BoardPresenter {
     events.forEach((event) => this.#renderEvent(event));
   }
 
+
+  #renderLoading = () => {
+    render(this.#boardComponent, this.#loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoEvents = () => {
     this.#noEventComponent = new NoEventView(this.#filterType);
     render(this.#eventListComponent, this.#noEventComponent, RenderPosition.BEFOREEND);
@@ -148,6 +161,7 @@ export default class BoardPresenter {
     this.#eventPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noEventComponent) {
       remove(this.#noEventComponent);
@@ -160,6 +174,11 @@ export default class BoardPresenter {
   }
 
   #renderBoard = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const events = this.events;
     if (events.length === 0) {
       this.#renderNoEvents();

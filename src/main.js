@@ -9,15 +9,13 @@ import EventsModel from './model/events-model.js';
 import FilterModel from './model/filter-model.js';
 
 import {render, RenderPosition, remove} from './utils/render.js';
-import {generateEvent} from './mock/event.js';
 import {MenuItem} from './const.js';
+import ApiService from './api-service.js';
 
-const EVENT_COUNT = 5;
+const AUTHORIZATION = 'Basic sadsadsacsaca3j';
+const END_POINT = 'https://16.ecmascript.pages.academy/big-trip/';
 
-const events = Array.from({length: EVENT_COUNT}, generateEvent);
-
-const eventsModel = new EventsModel();
-eventsModel.events = events;
+const eventsModel = new EventsModel(new ApiService(END_POINT, AUTHORIZATION));
 
 const filterModel = new FilterModel();
 
@@ -59,7 +57,10 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
   boardPresenter.createEvent();
 });
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
 boardPresenter.init();
+
+eventsModel.init().finally(() => {
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+});

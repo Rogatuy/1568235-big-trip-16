@@ -2,7 +2,7 @@ import { TYPE_OF_POINT } from '../const.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
-import he from 'he';
+// import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -14,9 +14,7 @@ export const createEventEditTypesTemplate = (currentType) => {
     </div>`).join('');
 };
 
-const createEventOfferTemplate = (objectOfOffer) => {
-  const arrayOffers = objectOfOffer.offers;
-  return arrayOffers.map((array) => `<div class="event__offer-selector">
+const createEventOfferTemplate = (arrayOffers) => arrayOffers.map((array) => `<div class="event__offer-selector">
   <input class="event__offer-checkbox  visually-hidden" id="event-offer-"${array.titleForTeg}"-1" type="checkbox" name="event-offer-${array.titleForTeg}">
   <label class="event__offer-label" for="event-offer-${array.titleForTeg}-1">
     <span class="event__offer-title">${array.title}</span>
@@ -24,7 +22,6 @@ const createEventOfferTemplate = (objectOfOffer) => {
     <span class="event__offer-price">${array.price}</span>
   </label>
 </div>` ).join('');
-};
 
 const createEventNewPhotosTemplate = (arrayOfPictures) => {
   const arrayOfPicture = arrayOfPictures;
@@ -51,9 +48,10 @@ export const BLANK_EVENT = {
 };
 
 const createFormEditTemplate = (event) => {
-  const {type, destination, price, description, startDate, endDate, offer, pictures} = event;
+  const {type, destination, price, startDate, endDate, offers} = event;
+  const {name, description, pictures} = destination;
   const typesTemplate = createEventEditTypesTemplate(type);
-  const offersTemplate = createEventOfferTemplate(offer);
+  const offersTemplate = createEventOfferTemplate(offers);
   const photosTemplate = createEventNewPhotosTemplate(pictures);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
@@ -78,7 +76,7 @@ const createFormEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${he.encode(destination)} list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${name} list="destination-list-1" required>
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
