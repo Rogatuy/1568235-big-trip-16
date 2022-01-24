@@ -28,7 +28,7 @@ const siteMainElement = siteBodyElement.querySelector('.page-main');
 const siteEventsElement = siteMainElement.querySelector('.trip-events');
 const siteMenuComponent = new SiteMenuView();
 
-render(siteHeaderMenuElement, siteMenuComponent, RenderPosition.BEFOREEND);
+
 render(siteHeaderInfoElement, new InfoView(), RenderPosition.AFTERBEGIN);
 
 const boardPresenter = new BoardPresenter(siteEventsElement, eventsModel, filterModel);
@@ -58,9 +58,11 @@ document.querySelector('.trip-main__event-add-btn').addEventListener('click', (e
 });
 
 
-filterPresenter.init();
 boardPresenter.init();
 
 eventsModel.init().finally(() => {
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  filterPresenter.init();
+  render(siteHeaderMenuElement, siteMenuComponent, RenderPosition.BEFOREEND);
+  render(siteHeaderMenuElement, siteMenuComponent, RenderPosition.BEFOREEND);
 });

@@ -27,7 +27,7 @@ export default class EventsModel extends AbstractObservable {
   updateEvent = async (updateType, update) => {
     const index = this.#events.findIndex((event) => event.id === update.id);
 
-    if (index === -1) {
+    if (index < 0 ) {
       throw new Error('Can\'t update unexisting event');
     }
 
@@ -45,29 +45,38 @@ export default class EventsModel extends AbstractObservable {
     }
   }
 
-  addEvent = (updateType, update) => {
-    this.#events = [
-      update,
-      ...this.#events,
-    ];
-
-    this._notify(updateType, update);
+  addEvent = async (updateType, update) => {
+    // try {
+    const response = await this.#apiService.addEvent(update);
+    const newEvent = this.#adaptToClient(response);
+    this.#events = [newEvent, ...this.#events];
+    this._notify(updateType, newEvent);
+    // } catch(err) {
+    //   throw new Error('Can\'t add task');
+    // }
   }
 
-  deleteEvent = (updateType, update) => {
+  deleteEvent = async (updateType, update) => {
     const index = this.#events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting event');
     }
 
-    this.#events = [
-      ...this.#events.slice(0, index),
-      ...this.#events.slice(index + 1),
-    ];
-
-    this._notify(updateType);
-  }
+    try {
+      // Обратите внимание, метод удаления задачи на сервере
+      // ничего не возвращает. Это и верно,
+      // ведь что можно вернуть при удалении задачи?
+      await this.#apiService.deleteEvent(update);
+      this.#events = [
+        ...this.#events.slice(0, index),
+        ...this.#events.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete task');
+    }
+  };
 
   #adaptToClient = (point) => {
     const adaptedEvent = {...point,

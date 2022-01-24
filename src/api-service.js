@@ -1,6 +1,8 @@
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 export default class ApiService {
@@ -30,6 +32,28 @@ export default class ApiService {
     return parsedResponse;
   }
 
+  addEvent = async (point) => {
+    const response = await this.#load({
+      url: 'points',
+      method: Method.POST,
+      body: JSON.stringify(this.#adaptToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  }
+
+  deleteEvent = async (point) => {
+    const response = await this.#load({
+      url: `points/${point.id}`,
+      method: Method.DELETE,
+    });
+
+    return response;
+  }
+
   #load = async ({
     url,
     method = Method.GET,
@@ -55,7 +79,7 @@ export default class ApiService {
     const adaptedEvent = {...point,
       'date_from': point.startDate,
       'date_to': point.endDate,
-      'base_price': point.price,
+      'base_price': parseInt(point.price, 10),
       'is_favorite': point.isFavorite,
     };
 

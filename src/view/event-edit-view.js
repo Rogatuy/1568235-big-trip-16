@@ -6,26 +6,35 @@ import dayjs from 'dayjs';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-export const createEventEditTypesTemplate = (currentType) => {
+export const createEventEditTypesTemplate = (currentType, isDisabled) => {
   const types = TYPE_OF_POINT;
   return types.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : ''}>
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : '' } ${isDisabled ? 'disabled' : '' }>
     <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
     </div>`).join('');
 };
 
-const createEventEditOfferTemplate = (arrayOffers) => {
-  if (arrayOffers) {
-    arrayOffers.forEach((item) => {item.titleForTag = item.title.split(' ')[0];});
-    arrayOffers.map((array) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-"${array.titleForTag}"-1" type="checkbox" name="event-offer-${array.titleForTag}">
-  <label class="event__offer-label" for="event-offer-${array.titleForTag}-1">
-    <span class="event__offer-title">${array.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${array.price}</span>
-  </label>
-</div>` ).join('');
-  }
+const createEventEditOfferTemplate = (arrayOffers, isDisabled) => {
+  let offers = '';
+  if (arrayOffers.length !== 0) {
+    arrayOffers.forEach((array) => {
+      array.titleForTag = array.title.split(' ')[0];
+      offers += `<div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-"${array.titleForTag}"-1" type="checkbox" name="event-offer-${array.titleForTag}" ${isDisabled ? 'disabled' : '' }>
+          <label class="event__offer-label" for="event-offer-${array.titleForTag}-1">
+          <span class="event__offer-title">${array.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${array.price}</span>
+        </label>
+      </div>`;
+    });
+    return `<section class="event__section  event__section--offers">
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+    <div class="event__available-offers">
+    ${offers}
+    </div>
+    </section>`;} else {
+    return ' ';}
 };
 
 
@@ -37,28 +46,26 @@ const createEventNewPhotosTemplate = (arrayOfPictures) => {
 export const BLANK_EVENT = {
   startDate: dayjs().format('DD/MM/YYYY'),
   endDate: dayjs().format('DD/MM/YYYY'),
-  pictures: [{src:'http://picsum.photos/300/200?r=5', description: 'desc 1'}],
   type: 'bus',
-  offer:{
-    type: 'taxi',
-    offers: [
-      {title: 'desc twenty two',
-        titleForTeg: 'desc',
-        price: 500},
-    ],
+  offers: [
+    {title: 'desc twenty two',
+      titleForTeg: 'desc',
+      price: 500},
+  ],
+  destination: {
+    name: 'Barcelona',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    pictures: [{src:'http://picsum.photos/300/200?r=5', description: 'desc 1'}],
   },
-  destination: 'Barcelona',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   price: 0,
   isFavorite: false
 };
 
-const createFormEditTemplate = (event) => {
-  const {type, destination, price, startDate, endDate, offers} = event;
+const createFormEditTemplate = (event = BLANK_EVENT) => {
+  const {type, destination, price, startDate, endDate, offers, isDisabled, isSaving, isDeleting} = event;
   const {name, description, pictures} = destination;
-  const typesTemplate = createEventEditTypesTemplate(type);
-  const offersTemplate = createEventEditOfferTemplate(offers);
-  console.log(offersTemplate);
+  const typesTemplate = createEventEditTypesTemplate(type, isDisabled);
+  const offersTemplate = createEventEditOfferTemplate(offers, isDisabled);
   const photosTemplate = createEventNewPhotosTemplate(pictures);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
@@ -69,8 +76,7 @@ const createFormEditTemplate = (event) => {
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="./img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : '' }>
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
@@ -83,7 +89,7 @@ const createFormEditTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${name} list="destination-list-1" required>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${name} list="destination-list-1" required ${isDisabled ? 'disabled' : '' }>
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -93,10 +99,10 @@ const createFormEditTemplate = (event) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(startDate).format('DD/MM/YY HH:mm')}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(startDate).format('DD/MM/YY HH:mm')}" ${isDisabled ? 'disabled' : '' }>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(endDate).format('DD/MM/YY HH:mm')}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(endDate).format('DD/MM/YY HH:mm')}" ${isDisabled ? 'disabled' : '' }>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -104,24 +110,17 @@ const createFormEditTemplate = (event) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" step="1" name="event-price" value=${price}>
+          <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" step="1" name="event-price" value=${price} ${isDisabled ? 'disabled' : '' }>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? '' : 'disabled'}>Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled || isDisabled ? '' : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
           ${offersTemplate}
-          </div>
-        </section>
-
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
@@ -273,12 +272,19 @@ export default class EventEditView extends SmartView {
   }
 
   static parseEventToData = (event) => {
-    const data = {...event};
+    const data = {...event,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
     return data;
   };
 
   static parseDataToEvent = (data) => {
     const event = {...data};
+    delete event.isDisabled;
+    delete event.isSaving;
+    delete event.isDeleting;
     return event;
   }
 }
