@@ -14,14 +14,20 @@ export const createEventEditTypesTemplate = (currentType) => {
     </div>`).join('');
 };
 
-const createEventOfferTemplate = (arrayOffers) => arrayOffers.map((array) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-"${array.titleForTeg}"-1" type="checkbox" name="event-offer-${array.titleForTeg}">
-  <label class="event__offer-label" for="event-offer-${array.titleForTeg}-1">
+const createEventEditOfferTemplate = (arrayOffers) => {
+  if (arrayOffers) {
+    arrayOffers.forEach((item) => {item.titleForTag = item.title.split(' ')[0];});
+    arrayOffers.map((array) => `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-"${array.titleForTag}"-1" type="checkbox" name="event-offer-${array.titleForTag}">
+  <label class="event__offer-label" for="event-offer-${array.titleForTag}-1">
     <span class="event__offer-title">${array.title}</span>
     &plus;&euro;&nbsp;
     <span class="event__offer-price">${array.price}</span>
   </label>
 </div>` ).join('');
+  }
+};
+
 
 const createEventNewPhotosTemplate = (arrayOfPictures) => {
   const arrayOfPicture = arrayOfPictures;
@@ -51,7 +57,8 @@ const createFormEditTemplate = (event) => {
   const {type, destination, price, startDate, endDate, offers} = event;
   const {name, description, pictures} = destination;
   const typesTemplate = createEventEditTypesTemplate(type);
-  const offersTemplate = createEventOfferTemplate(offers);
+  const offersTemplate = createEventEditOfferTemplate(offers);
+  console.log(offersTemplate);
   const photosTemplate = createEventNewPhotosTemplate(pictures);
   const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">

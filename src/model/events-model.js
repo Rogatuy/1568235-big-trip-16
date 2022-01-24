@@ -32,7 +32,7 @@ export default class EventsModel extends AbstractObservable {
     }
 
     try {
-      const response = await this.#apiService.updateEvent(update);
+      const response = await this.#apiService.updatePoint(update);
       const updatedEvent = this.#adaptToClient(response);
       this.#events = [
         ...this.#events.slice(0, index),
