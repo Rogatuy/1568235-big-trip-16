@@ -9,11 +9,8 @@ import EventsModel from './model/events-model.js';
 import FilterModel from './model/filter-model.js';
 
 import {render, RenderPosition, remove} from './utils/render.js';
-import {MenuItem} from './const.js';
+import {MenuItem, AUTHORIZATION, END_POINT} from './const.js';
 import ApiService from './api-service.js';
-
-const AUTHORIZATION = 'Basic sadsadsacsaca3j';
-const END_POINT = 'https://16.ecmascript.pages.academy/big-trip/';
 
 const eventsModel = new EventsModel(new ApiService(END_POINT, AUTHORIZATION));
 

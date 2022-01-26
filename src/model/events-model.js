@@ -86,6 +86,8 @@ export default class EventsModel extends AbstractObservable {
       isFavorite: point['is_favorite'],
     };
 
+    // adaptedEvent.offers.forEach((offer) => {offer.isFavorite = false;});
+
     delete adaptedEvent['date_from'];
     delete adaptedEvent['date_to'];
     delete adaptedEvent['base_price'];

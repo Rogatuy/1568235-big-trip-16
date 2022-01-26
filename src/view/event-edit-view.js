@@ -1,4 +1,4 @@
-import { TYPE_OF_POINT } from '../const.js';
+import {TYPE_OF_POINT, AUTHORIZATION, END_POINT} from '../const.js';
 import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
@@ -7,10 +7,19 @@ import {nanoid} from 'nanoid';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const api = new ApiService();
+const api = new ApiService(END_POINT, AUTHORIZATION);
 const destinationServer = api.destination;
+const offersServer = api.offers;
 
 console.log(destinationServer);
+
+// const getOffersForType = () => {
+//   const currentObjectOfOffers = offersServer.find((array) => array.type === 'bus');
+//   return currentObjectOfOffers.offers;
+// };
+
+// getOffersForType("bus");
+
 
 export const createEventEditTypesTemplate = (currentType, isDisabled) => {
   const types = TYPE_OF_POINT;
@@ -25,10 +34,9 @@ const createEventEditOfferTemplate = (arrayOffers, isDisabled) => {
   if (arrayOffers.length !== 0) {
     arrayOffers.forEach((array) => {
       array.isChecked = false;
-      console.log(array);
       array.titleForTag = array.title.split(' ')[0];
       offers += `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${array.titleForTag}-${array.id}" type="checkbox" name="event-offer-${array.titleForTag}" ${isDisabled ? 'disabled' : '' } ${array.isChecked ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${array.titleForTag}-${array.id}" type="checkbox" name="event-offer-${array.titleForTag}" ${isDisabled ? 'disabled' : '' } ${array.isChecked ? 'checked' : ''} value="${array.id}">
           <label class="event__offer-label" for="event-offer-${array.titleForTag}-${array.id}">
           <span class="event__offer-title">${array.title}</span>
           &plus;&euro;&nbsp;
@@ -79,7 +87,6 @@ const createFormEditTemplate = (event = BLANK_EVENT) => {
   const offersTemplate = createEventEditOfferTemplate(offers, isDisabled);
   const photosTemplate = createEventNewPhotosTemplate(pictures);
   const isSubmitDisabled = price && (price > 0);
-  const isDateDisabled = dayjs(startDate) < dayjs(endDate);
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post" autocomplete="off">
       <header class="event__header">
@@ -125,7 +132,7 @@ const createFormEditTemplate = (event = BLANK_EVENT) => {
           <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" step="1" name="event-price" value=${price} ${isDisabled ? 'disabled' : '' }>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled || isDisabled || isDateDisabled ? '' : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled || isDisabled ? '' : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -282,6 +289,15 @@ export default class EventEditView extends SmartView {
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.deleteClick(EventEditView.parseDataToEvent(this._data));
+  }
+
+  setOfferClickHandler = (callback) => {
+    this._callback.offerClick = callback;
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) =>{element.addEventListener('click', this.#offerClickHandler);});
+  }
+
+  #offerClickHandler = (evt) => {
+    this._callback.offerClick(evt.target);
   }
 
   static parseEventToData = (event) => {

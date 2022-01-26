@@ -20,12 +20,14 @@ export default class ApiService {
   }
 
   get destination() {
-    // console.log(this.#load({url: 'destinations'})
-    // .then(ApiService.parseResponse););
     return this.#load({url: 'destinations'})
       .then(ApiService.parseResponse);
   }
 
+  get offers() {
+    return this.#load({url: 'offers'})
+      .then(ApiService.parseResponse);
+  }
 
   updatePoint = async (point) => {
     const response = await this.#load({

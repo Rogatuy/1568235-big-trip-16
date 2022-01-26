@@ -21,6 +21,7 @@ export default class EventNewPresenter {
     this.#eventEditComponent = new EventEditView();
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
+    this.#eventEditComponent.setOfferClickHandler(this.#handleOfferClick);
 
     render(this.#eventListContainer, this.#eventEditComponent, RenderPosition.AFTERBEGIN);
 
@@ -74,5 +75,14 @@ export default class EventNewPresenter {
 
   #handleDeleteClick = () => {
     this.destroy();
+  }
+
+  #handleOfferClick = () => {
+    // this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
+    // this.#changeData (
+    //   UserAction.UPDATE_EVENT,
+    //   UpdateType.PATCH,
+    //   {...this.#event, isFavorite: !this.#event.isFavorite},
+    // );
   }
 }

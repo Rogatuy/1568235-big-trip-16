@@ -46,6 +46,7 @@ export default class EventPresenter {
     this.#eventEditComponent.setEditClickHandler(this.#handleFormClick);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
+    this.#eventEditComponent.setOfferClickHandler(this.#handleOfferClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventListContainer, this.#eventComponent, RenderPosition.BEFOREEND);
@@ -165,5 +166,14 @@ export default class EventPresenter {
   #handleFormClick = () => {
     this.#eventEditComponent.reset(this.#event);
     this.#replaceFormToEvent();
+  }
+
+  #handleOfferClick = () => {
+    // this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
+    // this.#changeData (
+    //   UserAction.UPDATE_EVENT,
+    //   UpdateType.PATCH,
+    //   {...this.#event, isFavorite: !this.#event.isFavorite},
+    // );
   }
 }
