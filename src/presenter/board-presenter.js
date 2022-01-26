@@ -5,7 +5,7 @@ import NoEventView from '../view/no-event-view.js';
 import LoadingView from '../view/loading-view.js';
 
 import {render, remove, RenderPosition} from '../utils/render.js';
-import {sortEventPrice, sortEventTime} from '../utils/event.js';
+import {sortEventDay, sortEventPrice, sortEventTime} from '../utils/event.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
 
@@ -45,6 +45,8 @@ export default class BoardPresenter {
     const filteredEvents = filter[this.#filterType](events);
 
     switch (this.#currentSortType) {
+      case SortType.DAY:
+        return filteredEvents.sort(sortEventDay);
       case SortType.PRICE:
         return filteredEvents.sort(sortEventPrice);
       case SortType.TIME:

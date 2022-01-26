@@ -46,14 +46,14 @@ export default class EventsModel extends AbstractObservable {
   }
 
   addEvent = async (updateType, update) => {
-    // try {
-    const response = await this.#apiService.addEvent(update);
-    const newEvent = this.#adaptToClient(response);
-    this.#events = [newEvent, ...this.#events];
-    this._notify(updateType, newEvent);
-    // } catch(err) {
-    //   throw new Error('Can\'t add task');
-    // }
+    try {
+      const response = await this.#apiService.addEvent(update);
+      const newEvent = this.#adaptToClient(response);
+      this.#events = [newEvent, ...this.#events];
+      this._notify(updateType, newEvent);
+    } catch(err) {
+      throw new Error('Can\'t add task');
+    }
   }
 
   deleteEvent = async (updateType, update) => {
@@ -86,7 +86,6 @@ export default class EventsModel extends AbstractObservable {
       isFavorite: point['is_favorite'],
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedEvent['date_from'];
     delete adaptedEvent['date_to'];
     delete adaptedEvent['base_price'];
