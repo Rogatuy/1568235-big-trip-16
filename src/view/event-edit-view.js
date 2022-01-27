@@ -8,8 +8,8 @@ import {nanoid} from 'nanoid';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const api = new ApiService(END_POINT, AUTHORIZATION);
-const destinationServer = api.destination;
-const offersServer = api.offers;
+const destinationServer = api.destination.then(((response) => someArray));
+// const offersServer = api.offers;
 
 console.log(destinationServer);
 
