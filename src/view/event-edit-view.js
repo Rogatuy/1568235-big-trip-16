@@ -8,17 +8,6 @@ import {nanoid} from 'nanoid';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const api = new ApiService(END_POINT, AUTHORIZATION);
-const destinationServer = api.destination.then(((response) => someArray));
-// const offersServer = api.offers;
-
-console.log(destinationServer);
-
-// const getOffersForType = () => {
-//   const currentObjectOfOffers = offersServer.find((array) => array.type === 'bus');
-//   return currentObjectOfOffers.offers;
-// };
-
-// getOffersForType("bus");
 
 
 export const createEventEditTypesTemplate = (currentType, isDisabled) => {
@@ -53,10 +42,11 @@ const createEventEditOfferTemplate = (arrayOffers, isDisabled) => {
     return ' ';}
 };
 
-
-const createEventNewPhotosTemplate = (arrayOfPictures) => {
-  const arrayOfPicture = arrayOfPictures;
-  return arrayOfPicture.map((array) => `<img class="event__photo" src="${array.src}" alt="${array.description}">`).join('');
+const createDestinationOption = () => {
+  api.destination.then((res) => {
+    let destinationOption = '';
+    res.forEach((item) => {destinationOption += `<option>${item.name}</option>`;});
+    return destinationOption;});
 };
 
 export const BLANK_EVENT = {
@@ -72,21 +62,40 @@ export const BLANK_EVENT = {
     },
   ],
   destination: {
-    name: 'Barcelona',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    pictures: [{src:'http://picsum.photos/300/200?r=5', description: 'desc 1'}],
+    name: 'Vien',
   },
   price: 0,
   isFavorite: false
 };
 
+const createDescription = (destinationName) => {
+  api.destination.then((res) => {
+    let destination = '';
+    const currentObjectDestination = res.find((array) => array.name === destinationName);
+
+    const photosTemplate = currentObjectDestination.pictures.map((array) => `<img class="event__photo" src="${array.src}" alt="${array.description}">`).join('');
+    destination = `<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+    <p class="event__destination-description">${currentObjectDestination.description}</p>
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+      ${photosTemplate}
+      </div>
+    </div>
+  </section>`;
+  console.log(destination);
+    return destination;});
+};
+
+
 const createFormEditTemplate = (event = BLANK_EVENT) => {
   const {type, destination, price, startDate, endDate, offers, isDisabled, isSaving, isDeleting} = event;
-  const {name, description, pictures} = destination;
+  const {name} = destination;
   const typesTemplate = createEventEditTypesTemplate(type, isDisabled);
   const offersTemplate = createEventEditOfferTemplate(offers, isDisabled);
-  const photosTemplate = createEventNewPhotosTemplate(pictures);
   const isSubmitDisabled = price && (price > 0);
+  const destinationOptionTemplate = createDestinationOption();
+  const descriptionTemplate = createDescription(name);
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post" autocomplete="off">
       <header class="event__header">
@@ -110,9 +119,7 @@ const createFormEditTemplate = (event = BLANK_EVENT) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${name} list="destination-list-1" required ${isDisabled ? 'disabled' : '' }>
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${destinationOptionTemplate}
           </datalist>
         </div>
 
@@ -140,17 +147,7 @@ const createFormEditTemplate = (event = BLANK_EVENT) => {
       </header>
       <section class="event__details">
           ${offersTemplate}
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description}</p>
-
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-            ${photosTemplate}
-            </div>
-          </div>
-
-        </section>
+          ${descriptionTemplate}
       </section>
     </form>
   </li>`;
