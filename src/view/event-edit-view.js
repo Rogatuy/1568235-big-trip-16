@@ -56,10 +56,10 @@ export const BLANK_EVENT = {
   isFavorite: false
 };
 
-export const createEventEditTypesTemplate = (currentType) => {
+export const createEventEditTypesTemplate = (currentType, isDisabled) => {
   const types = TYPE_OF_POINT;
   return types.map((type) => `<div class="event__type-item">
-    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : '' }>
+    <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${currentType === type ? 'checked' : '' } ${isDisabled ? 'disabled' : '' }>
     <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
     </div>`).join('');
 };
@@ -300,6 +300,7 @@ export default class EventEditView extends SmartView {
   #destinationChangeHandler = (evt) => {
     const destinationInputElement = this.element.querySelector('#event-destination-1');
     const destinationsListElement = this.element.querySelector('#destination-list-1');
+    const buttonSave = this.element.querySelector('.event__save-btn');
     let optionFound = false;
 
     for (let i = 0; i < destinationsListElement.options.length; i++) {
@@ -320,6 +321,9 @@ export default class EventEditView extends SmartView {
           pictures: newDestination.pictures,
         }
       });
+      buttonSave.removeAttribute('disabled', 'disabled');
+    }  else {
+      buttonSave.setAttribute('disabled', 'disabled');
     }
   }
 

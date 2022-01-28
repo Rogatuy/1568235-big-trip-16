@@ -87,8 +87,8 @@ export default class ApiService {
 
   #adaptToServer = (point) => {
     const adaptedEvent = {...point,
-      'date_from': point.startDate.toISOString(),
-      'date_to': point.endDate.toISOString(),
+      'date_from': point.startDate,
+      'date_to': point.endDate,
       'base_price': parseInt(point.price, 10),
       'is_favorite': point.isFavorite,
     };
