@@ -2,7 +2,6 @@ import EventEditView from '../view/event-edit-view.js';
 import EventView from '../view/event-view.js';
 import { render, RenderPosition, replace, remove } from '../utils/render';
 import { UpdateType, UserAction } from '../const.js';
-import { isDatesEqual } from '../utils/event.js';
 
 
 const Mode = {
@@ -33,20 +32,20 @@ export default class EventPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (event) => {
+  init = (event, offers, destinations) => {
     this.#event = event;
+
     const prevEventComponent = this.#eventComponent;
     const prevEventEditComponent = this.#eventEditComponent;
 
     this.#eventComponent = new EventView(event);
-    this.#eventEditComponent = new EventEditView(event);
+    this.#eventEditComponent = new EventEditView(destinations, offers, event);
 
     this.#eventComponent.setEditClickHandler(this.#handleEditClick);
     this.#eventComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#eventEditComponent.setEditClickHandler(this.#handleFormClick);
+    this.#eventEditComponent.setEditClickHandler(this.#handleCloseClick);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
-    this.#eventEditComponent.setOfferClickHandler(this.#handleOfferClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this.#eventListContainer, this.#eventComponent, RenderPosition.BEFOREEND);
@@ -65,12 +64,6 @@ export default class EventPresenter {
     remove(prevEventComponent);
     remove(prevEventEditComponent);
   }
-
-  destroy = () => {
-    remove(this.#eventComponent);
-    remove(this.#eventEditComponent);
-  }
-
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
@@ -111,6 +104,11 @@ export default class EventPresenter {
     }
   }
 
+  destroy = () => {
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
+  }
+
   #replaceEventToForm = () => {
     replace(this.#eventEditComponent, this.#eventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -132,26 +130,29 @@ export default class EventPresenter {
     }
   }
 
-  #handleFavoriteClick = () => {
-    this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
-    this.#changeData (
-      UserAction.UPDATE_EVENT,
-      UpdateType.PATCH,
-      {...this.#event, isFavorite: !this.#event.isFavorite},
-    );
-  }
-
   #handleEditClick = () => {
     this.#replaceEventToForm();
   }
 
-  #handleFormSubmit = (update) => {
-    const isMinorUpdate = !isDatesEqual(this.#event.startDate, update.startDate);
+  #handleCloseClick = () => {
+    this.#eventEditComponent.reset(this.#event);
+    this.#replaceFormToEvent();
+  }
 
+  #handleFormSubmit = (update) => {
     this.#changeData(
       UserAction.UPDATE_EVENT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       update,
+    );
+  }
+
+  #handleFavoriteClick = () => {
+    this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
+    this.#changeData (
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
+      {...this.#event, isFavorite: !this.#event.isFavorite},
     );
   }
 
@@ -163,17 +164,4 @@ export default class EventPresenter {
     );
   }
 
-  #handleFormClick = () => {
-    this.#eventEditComponent.reset(this.#event);
-    this.#replaceFormToEvent();
-  }
-
-  #handleOfferClick = () => {
-    // this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
-    // this.#changeData (
-    //   UserAction.UPDATE_EVENT,
-    //   UpdateType.PATCH,
-    //   {...this.#event, isFavorite: !this.#event.isFavorite},
-    // );
-  }
 }

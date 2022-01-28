@@ -19,7 +19,7 @@ export default class ApiService {
       .then(ApiService.parseResponse);
   }
 
-  get destination() {
+  get destinations() {
     return this.#load({url: 'destinations'})
       .then(ApiService.parseResponse);
   }
@@ -87,8 +87,8 @@ export default class ApiService {
 
   #adaptToServer = (point) => {
     const adaptedEvent = {...point,
-      'date_from': point.startDate,
-      'date_to': point.endDate,
+      'date_from': point.startDate.toISOString(),
+      'date_to': point.endDate.toISOString(),
       'base_price': parseInt(point.price, 10),
       'is_favorite': point.isFavorite,
     };

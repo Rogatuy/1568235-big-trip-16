@@ -61,5 +61,5 @@ eventsModel.init().finally(() => {
   siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
   filterPresenter.init();
   render(siteHeaderMenuElement, siteMenuComponent, RenderPosition.BEFOREEND);
-  render(siteHeaderMenuElement, siteMenuComponent, RenderPosition.BEFOREEND);
 });
+

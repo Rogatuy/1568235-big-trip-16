@@ -56,6 +56,14 @@ export default class BoardPresenter {
     return filteredEvents;
   }
 
+  get offers() {
+    return this.#eventsModel.offers;
+  }
+
+  get destinations() {
+    return this.#eventsModel.destinations;
+  }
+
   init = () => {
     render(this.#boardContainer, this.#boardComponent, RenderPosition.BEFOREEND);
     render(this.#boardComponent, this.#eventListComponent, RenderPosition.BEFOREEND);
@@ -77,7 +85,9 @@ export default class BoardPresenter {
   }
 
   createEvent = () => {
-    this.#eventNewPresenter.init();
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#eventNewPresenter.init(this.#eventsModel.destinations, this.#eventsModel.offers);
   }
 
   #handleModeChange = () => {
@@ -147,21 +157,19 @@ export default class BoardPresenter {
 
   #renderSort = () => {
     this.#sortComponent = new SortView(this.#currentSortType);
-    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
-
     render(this.#boardComponent, this.#sortComponent, RenderPosition.AFTERBEGIN);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderEvent = (event) => {
     const eventPresenter = new EventPresenter(this.#eventListComponent, this.#handleViewAction, this.#handleModeChange);
-    eventPresenter.init(event);
+    eventPresenter.init(event, this.#eventsModel.offers, this.#eventsModel.destinations);
     this.#eventPresenter.set(event.id, eventPresenter);
   }
 
   #renderEvents = (events) => {
     events.forEach((event) => this.#renderEvent(event));
   }
-
 
   #renderLoading = () => {
     render(this.#boardComponent, this.#loadingComponent, RenderPosition.AFTERBEGIN);
@@ -187,7 +195,6 @@ export default class BoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
-
   }
 
   #renderBoard = () => {

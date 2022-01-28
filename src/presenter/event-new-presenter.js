@@ -13,15 +13,10 @@ export default class EventNewPresenter {
     this.#changeData = changeData;
   }
 
-  init = () => {
-    if (this.#eventEditComponent !== null) {
-      return;
-    }
-
-    this.#eventEditComponent = new EventEditView();
+  init = (destinations, offers) => {
+    this.#eventEditComponent = new EventEditView(destinations, offers);
     this.#eventEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#eventEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
-    this.#eventEditComponent.setOfferClickHandler(this.#handleOfferClick);
 
     render(this.#eventListContainer, this.#eventEditComponent, RenderPosition.AFTERBEGIN);
 
@@ -37,13 +32,6 @@ export default class EventNewPresenter {
     this.#eventEditComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-  }
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.destroy();
-    }
   }
 
   setSaving = () => {
@@ -77,12 +65,11 @@ export default class EventNewPresenter {
     this.destroy();
   }
 
-  #handleOfferClick = () => {
-    // this.#changeData({...this.#event, isFavorite: !this.#event.isFavorite});
-    // this.#changeData (
-    //   UserAction.UPDATE_EVENT,
-    //   UpdateType.PATCH,
-    //   {...this.#event, isFavorite: !this.#event.isFavorite},
-    // );
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.destroy();
+    }
   }
+
 }

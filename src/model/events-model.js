@@ -4,6 +4,8 @@ import {UpdateType} from '../const.js';
 export default class EventsModel extends AbstractObservable {
   #apiService = null;
   #events= [];
+  #offers = [];
+  #destinations = [];
 
   constructor(apiService) {
     super();
@@ -14,12 +16,24 @@ export default class EventsModel extends AbstractObservable {
     return this.#events;
   }
 
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
   init = async () => {
     try {
       const events = await this.#apiService.points;
       this.#events = events.map(this.#adaptToClient);
+      this.#offers = await this.#apiService.offers;
+      this.#destinations = await this.#apiService.destinations;
     } catch(err) {
       this.#events = [];
+      this.#offers = [];
+      this.#destinations = [];
     }
     this._notify(UpdateType.INIT);
   }
@@ -64,9 +78,6 @@ export default class EventsModel extends AbstractObservable {
     }
 
     try {
-      // Обратите внимание, метод удаления задачи на сервере
-      // ничего не возвращает. Это и верно,
-      // ведь что можно вернуть при удалении задачи?
       await this.#apiService.deleteEvent(update);
       this.#events = [
         ...this.#events.slice(0, index),
@@ -85,8 +96,6 @@ export default class EventsModel extends AbstractObservable {
       price: point['base_price'],
       isFavorite: point['is_favorite'],
     };
-
-    // adaptedEvent.offers.forEach((offer) => {offer.isFavorite = false;});
 
     delete adaptedEvent['date_from'];
     delete adaptedEvent['date_to'];
