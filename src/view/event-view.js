@@ -2,10 +2,17 @@ import AbstractView from './abstract-view.js';
 import dayjs from 'dayjs';
 import {generateTimeDifference} from '../utils/event.js';
 
-const createEventTemplate = (event) => {
-  const {startDate, endDate, type, destination, price, isFavorite} = event;
-  const timeDifference = generateTimeDifference(startDate, endDate);
+const createEventOfferTemplate = (arrayOffers) => arrayOffers.map((array) => `<li class="event__offer">
+<span class="event__offer-title">${array.title}</span>
+&plus;&euro;&nbsp;
+<span class="event__offer-price">${array.price}</span>
+</li>` ).join('');
 
+const createEventTemplate = (event) => {
+  const {startDate, endDate, type, destination, price, isFavorite, offers} = event;
+  const {name} = destination;
+  const timeDifference = generateTimeDifference(startDate, endDate);
+  const offersTemplate = createEventOfferTemplate(offers);
   const buttonFavoriteClassName = (isFavorite) ? 'event__favorite-btn--active' : '';
   return `<li class="trip-events__item">
   <div class="event">
@@ -13,7 +20,7 @@ const createEventTemplate = (event) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="./img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} ${destination}</h3>
+    <h3 class="event__title">${type} ${name}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${dayjs(startDate).format('YYYY-MM-DTHH:mm')}">${dayjs(startDate).format('HH:mm')}</time>
@@ -27,11 +34,7 @@ const createEventTemplate = (event) => {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      <li class="event__offer">
-        <span class="event__offer-title">Order Uber</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">20</span>
-      </li>
+      ${offersTemplate}
     </ul>
     <button class="event__favorite-btn ${buttonFavoriteClassName}" type="button">
       <span class="visually-hidden">Add to favorite</span>
