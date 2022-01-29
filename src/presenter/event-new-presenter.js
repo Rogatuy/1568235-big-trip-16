@@ -7,6 +7,7 @@ export default class EventNewPresenter {
   #eventListContainer = null;
   #changeData = null;
   #eventEditComponent = null;
+  #buttonAdd = document.querySelector('.trip-main__event-add-btn');
 
   constructor(eventListContainer, changeData) {
     this.#eventListContainer = eventListContainer;
@@ -59,16 +60,19 @@ export default class EventNewPresenter {
       UpdateType.MINOR,
       event,
     );
+    this.#buttonAdd.disabled = false;
   }
 
   #handleDeleteClick = () => {
     this.destroy();
+    this.#buttonAdd.disabled = false;
   }
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
+      this.#buttonAdd.disabled = false;
     }
   }
 

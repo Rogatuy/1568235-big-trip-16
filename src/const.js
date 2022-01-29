@@ -32,4 +32,10 @@ export const MenuItem = {
 export const TYPE_OF_POINT = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 export const AUTHORIZATION = 'Basic sadsadsacsaca3j';
-export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip/';
+export const END_POINT = 'https://16.ecmascript.pages.academy/big-trip';
+
+export const CitiesCount = {
+  ONE_CITY: 1,
+  TWO_CITIES: 2,
+  THREE_CITIES: 3,
+};

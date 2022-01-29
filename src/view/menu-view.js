@@ -9,7 +9,7 @@ const createMenuTemplate = () => (
   </nav>`
 );
 
-export default class SiteMenuView extends AbstractView {
+export default class MenuView extends AbstractView {
   get template() {
     return createMenuTemplate();
   }
@@ -21,10 +21,8 @@ export default class SiteMenuView extends AbstractView {
 
   setMenuItem = (menuItem) => {
     const item = this.element.querySelector(`[text=${menuItem}]`);
-
-
     if (item !== null) {
-      item.classList.add('.trip-tabs__btn--active'); //спросить у Жени, как сделать этот момент
+      item.classList.add('.trip-tabs__btn--active');
     }
   }
 

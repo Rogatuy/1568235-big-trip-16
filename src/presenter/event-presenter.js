@@ -145,6 +145,8 @@ export default class EventPresenter {
       UpdateType.MINOR,
       update,
     );
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
   }
 
   #handleFavoriteClick = () => {

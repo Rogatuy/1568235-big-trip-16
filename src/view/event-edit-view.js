@@ -3,54 +3,18 @@ import SmartView from './smart-view.js';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
 
-
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export const BLANK_EVENT = {
+  id: `${(Math.random() * 100).toFixed()}`,
   startDate: new Date(),
   endDate: new Date(),
   type: 'flight',
-  offers:
-  {
-    type: 'flight',
-    offers: [
-      {
-        id: 1,
-        title: 'Choose meal',
-        price: 120
-      },
-      {
-        id: 2,
-        title: 'Choose seats',
-        price: 90
-      },
-      {
-        id: 3,
-        title: 'Upgrade to comfort class',
-        price: 120
-      },
-      {
-        id: 4,
-        title: 'Upgrade to business class',
-        price: 120
-      },
-      {
-        id: 5,
-        title: 'Add luggage',
-        price: 170
-      },
-      {
-        id: 6,
-        title: 'Business lounge',
-        price: 160
-      }
-    ]
-  },
+  offers: [],
 
   destination: {
-    name: 'Bruxelles',
-    description: 'Cras aliquet varius magna, non porta ligula feugiat eget.',
-    photos: ['http://picsum.photos/248/152?r=2'],
+    name: '',
+    description: '',
   },
   price: 500,
   isFavorite: false
@@ -76,12 +40,11 @@ const createEventEditOfferTemplate = (type, pointOffers, offersList, isDisabled)
     return '';
   }
 
-
   const isOfferChecked = (id) => pointOffers.some((pointOffer) => pointOffer.id === id);
 
   const offersForType = currentOffersList.offers.map( ({id, title, price}) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}-${id}" ${isOfferChecked(id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}-${id}" ${pointOffers && pointOffers.length >= 0 && isOfferChecked(id) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -115,7 +78,6 @@ const createEventDestination = (destination) => {
 const createFormEditTemplate = (event, destinations, offersList) => {
   const {type, destination, price, startDate, endDate, offers, isDisabled, isSaving, isDeleting} = event;
   const typesTemplate = createEventEditTypesTemplate(type, isDisabled);
-  const isSubmitDisabled = price && (price > 0);
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post" autocomplete="off">
       <header class="event__header">
@@ -137,7 +99,7 @@ const createFormEditTemplate = (event, destinations, offersList) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination.name} list="destination-list-1" ${isDisabled ? 'disabled' : '' }>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1" ${isDisabled ? 'disabled' : '' }>
           <datalist id="destination-list-1">
             ${createAvailableCitiesList(destinations)}
           </datalist>
@@ -156,11 +118,11 @@ const createFormEditTemplate = (event, destinations, offersList) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" step="1" name="event-price" value=${price} ${isDisabled ? 'disabled' : '' }>
+          <input class="event__input  event__input--price" id="event-price-1" type="number" min="1" step="1" name="event-price" value="${price}" ${isDisabled ? 'disabled' : '' }>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled || isDisabled ? '' : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
-        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" >${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}> ${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -183,6 +145,8 @@ export default class EventEditView extends SmartView {
 
     this._offers = offers;
     this._destinations = destinations;
+
+    this._isBlank =
 
     this._lastFocus = null;
     this.#setInnerHandlers();
@@ -212,10 +176,6 @@ export default class EventEditView extends SmartView {
     this.#setEndDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
-    if (this._lastFocus) {
-      document.querySelector(`#${this._lastFocus}`).focus();
-      this._lastFocus = null;
-    }
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
@@ -227,6 +187,16 @@ export default class EventEditView extends SmartView {
   setDeleteClickHandler = (callback) => {
     this._callback.deleteClick = callback;
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  }
+
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  setOfferClickHandler = (callback) => {
+    this._callback.offerClick = callback;
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) =>{element.addEventListener('click', this.#offerClickHandler);});
   }
 
   #setStartDatepicker = () => {
@@ -270,9 +240,9 @@ export default class EventEditView extends SmartView {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('#event-destination-1')
-      .addEventListener('change', this.#destinationChangeHandler);
+      .addEventListener('input', this.#destinationChangeHandler);
     this.element.querySelector('.event__input--price')
-      .addEventListener('input', this.#priceChangeHandler);
+      .addEventListener('change', this.#priceChangeHandler);
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
     if(this.element.querySelector('.event__available-offers')) {
@@ -289,12 +259,18 @@ export default class EventEditView extends SmartView {
   }
 
   #priceChangeHandler = (evt) => {
-    evt.preventDefault();
-    this._lastFocus = evt.target.id;
-    this.updateData({
-      price: evt.target.value,
-    });
-  }
+    const priceInputElement = this.element.querySelector('#event-price-1');
+    const buttonSave = this.element.querySelector('.event__save-btn');
+
+    if (priceInputElement.value > 0) {
+      this.updateData({
+        price: evt.target.value
+      });
+      buttonSave.disabled = false;
+    }  else {
+      buttonSave.disabled = true;
+    }
+  };
 
 
   #destinationChangeHandler = (evt) => {
@@ -321,9 +297,9 @@ export default class EventEditView extends SmartView {
           pictures: newDestination.pictures,
         }
       });
-      buttonSave.removeAttribute('disabled', 'disabled');
+      buttonSave.disabled = false;
     }  else {
-      buttonSave.setAttribute('disabled', 'disabled');
+      buttonSave.disabled = true;
     }
   }
 
@@ -331,7 +307,6 @@ export default class EventEditView extends SmartView {
     const currentOffersList = this._offers.find((offer) => offer.type === this._data.type);
     const targetOfferTitle = evt.target.nextElementSibling.querySelector('.event__offer-title').textContent;
     const selectedOffer = currentOffersList.offers.find((offer) => offer.title === targetOfferTitle);
-
     if (evt.target.checked) {
       this._data.offers.push(selectedOffer);
     } else {
@@ -349,11 +324,6 @@ export default class EventEditView extends SmartView {
     this._callback.formSubmit(EventEditView.parseDataToEvent(this._data));
   }
 
-  setEditClickHandler = (callback) => {
-    this._callback.editClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
-  }
-
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.editClick();
@@ -362,11 +332,6 @@ export default class EventEditView extends SmartView {
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.deleteClick(EventEditView.parseDataToEvent(this._data));
-  }
-
-  setOfferClickHandler = (callback) => {
-    this._callback.offerClick = callback;
-    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) =>{element.addEventListener('click', this.#offerClickHandler);});
   }
 
   #offerClickHandler = (evt) => {
@@ -390,4 +355,3 @@ export default class EventEditView extends SmartView {
     return event;
   }
 }
-

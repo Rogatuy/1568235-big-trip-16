@@ -1,5 +1,4 @@
-import SiteMenuView from './view/menu-view.js';
-import InfoView from './view/info-view.js';
+import MenuView from './view/menu-view.js';
 import StatisticsView from './view/statistics-view.js';
 
 import BoardPresenter from './presenter/board-presenter.js';
@@ -23,12 +22,10 @@ const siteHeaderMenuElement = siteHeaderElement.querySelector('.trip-controls__n
 const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-main');
 const siteMainElement = siteBodyElement.querySelector('.page-main');
 const siteEventsElement = siteMainElement.querySelector('.trip-events');
-const siteMenuComponent = new SiteMenuView();
+const siteMenuComponent = new MenuView();
 
 
-render(siteHeaderInfoElement, new InfoView(), RenderPosition.AFTERBEGIN);
-
-const boardPresenter = new BoardPresenter(siteEventsElement, eventsModel, filterModel);
+const boardPresenter = new BoardPresenter(siteEventsElement, eventsModel, filterModel, siteHeaderInfoElement);
 const filterPresenter = new FilterPresenter(siteHeaderFilterElement, filterModel, eventsModel);
 
 let statisticsComponent = null;
@@ -52,6 +49,7 @@ const handleSiteMenuClick = (menuItem) => {
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
   evt.preventDefault();
   boardPresenter.createEvent();
+  document.querySelector('.trip-main__event-add-btn').disabled = true;
 });
 
 

@@ -93,7 +93,6 @@ export default class ApiService {
       'is_favorite': point.isFavorite,
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedEvent.startDate;
     delete adaptedEvent.endDate;
     delete adaptedEvent.price;

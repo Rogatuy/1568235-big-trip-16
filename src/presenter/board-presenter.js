@@ -3,8 +3,9 @@ import EventListView from '../view/list-events-view.js';
 import BoardView from '../view/board-view.js';
 import NoEventView from '../view/no-event-view.js';
 import LoadingView from '../view/loading-view.js';
+import InfoView from '../view/info-view.js';
 
-import {render, remove, RenderPosition} from '../utils/render.js';
+import {render, remove, RenderPosition, replace} from '../utils/render.js';
 import {sortEventDay, sortEventPrice, sortEventTime} from '../utils/event.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
@@ -23,6 +24,8 @@ export default class BoardPresenter {
   #loadingComponent = new LoadingView();
   #noEventComponent = null;
   #sortComponent = null;
+  #infoComponent = null;
+  #infoContainer = null;
 
   #eventPresenter = new Map();
   #eventNewPresenter = null;
@@ -30,12 +33,13 @@ export default class BoardPresenter {
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
 
-  constructor (boardContainer, eventsModel, filterModel) {
+  constructor (boardContainer, eventsModel, filterModel, infoContainer) {
     this.#boardContainer = boardContainer;
     this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
+    this.#infoContainer = infoContainer;
 
-    this.#eventNewPresenter = new EventNewPresenter(this.#eventListComponent, this.#handleViewAction); //может быть не сюда, надо посмотреть
+    this.#eventNewPresenter = new EventNewPresenter(this.#eventListComponent, this.#handleViewAction);
 
   }
 
@@ -161,6 +165,19 @@ export default class BoardPresenter {
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
+  #renderInfo = () => {
+    const prevInfoComponent = this.#infoComponent;
+    this.#infoComponent = new InfoView(this.#eventsModel.events);
+
+    if (prevInfoComponent === null) {
+      render(this.#infoContainer, this.#infoComponent, RenderPosition.AFTERBEGIN);
+      return;
+    }
+
+    replace(this.#infoComponent, prevInfoComponent);
+    remove(prevInfoComponent);
+  }
+
   #renderEvent = (event) => {
     const eventPresenter = new EventPresenter(this.#eventListComponent, this.#handleViewAction, this.#handleModeChange);
     eventPresenter.init(event, this.#eventsModel.offers, this.#eventsModel.destinations);
@@ -209,6 +226,7 @@ export default class BoardPresenter {
     } else {
       this.#renderSort();
       this.#renderEvents(events);
+      this.#renderInfo();
     }
   }
 }
