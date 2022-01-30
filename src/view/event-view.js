@@ -2,10 +2,10 @@ import AbstractView from './abstract-view.js';
 import dayjs from 'dayjs';
 import {generateTimeDifference} from '../utils/event.js';
 
-const createEventOfferTemplate = (arrayOffers) => arrayOffers.map((array) => `<li class="event__offer">
-<span class="event__offer-title">${array.title}</span>
+const createEventOfferTemplate = (offers) => offers.map((offer) => `<li class="event__offer">
+<span class="event__offer-title">${offer.title}</span>
 &plus;&euro;&nbsp;
-<span class="event__offer-price">${array.price}</span>
+<span class="event__offer-price">${offer.price}</span>
 </li>` ).join('');
 
 const createEventTemplate = (event) => {

@@ -35,7 +35,7 @@ const createAvailableCitiesList = (destinations) => {
 };
 
 const createEventEditOfferTemplate = (type, pointOffers, offersList, isDisabled) => {
-  const currentOffersList = offersList.find((array) => array.type === type);
+  const currentOffersList = offersList.find((offers) => offers.type === type);
   if (currentOffersList.offers.length === 0) {
     return '';
   }
